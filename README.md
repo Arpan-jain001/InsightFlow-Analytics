@@ -1,5 +1,5 @@
 <h1 align="center">
-  🚀 InsightFlow
+  🚀 InsightFlow Analytics
 </h1>
 
 <p align="center">
