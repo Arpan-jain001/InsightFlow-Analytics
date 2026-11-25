@@ -9,7 +9,7 @@
 <p align="center">
   <b>Built with ❤️ by Arpan Jain &  Team</b>  
   <br/>
-  ⚡ Coming Soon – Industry Level SaaS Platform
+  ⚡ Coming soon – Industry Level SaaS Platform
 </p>
 
 
