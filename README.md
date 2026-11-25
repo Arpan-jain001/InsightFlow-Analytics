@@ -31,7 +31,7 @@
 
 We believe that **data should guide every decision.**
 
-InsightFlow is built with a clear vision:
+InsightFlow is built with a clear vision:-
 
 > “To empower businesses with AI-driven behavioural intelligence.”
 
