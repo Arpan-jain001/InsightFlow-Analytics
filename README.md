@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <b>Built with ❤️ by Arpan Jain & Team</b>  
+  <b>Built with ❤️ by Arpan Jain &  Team</b>  
   <br/>
   ⚡ Coming Soon – Industry Level SaaS Platform
 </p>
