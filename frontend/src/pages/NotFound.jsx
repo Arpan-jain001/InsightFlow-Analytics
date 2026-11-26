@@ -15,7 +15,7 @@ const NotFound = () => {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
 
       {/* 🌌 Gradient Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#a5b4fc_0%,transparent_40%),radial-gradient(circle_at_80%_10%,#c084fc_0%,transparent_40%),linear-gradient(180deg,#0f172a_0%,#020617_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#a5b4fc_0%,transparent_40%),radial-gradient(circle_at_80%_10%,#c084fc_0%,transparent_40%),linear-gradient(180deg,#16132e_0%,#020617_100%)]" />
 
       {/* ✨ Stars */}
       <div className="absolute inset-0">

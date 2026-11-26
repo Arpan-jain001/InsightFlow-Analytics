@@ -1,7 +1,8 @@
+import { ButtonSpinner } from "../components/ui/InsightLoader";
 import { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight, Loader2, ShieldCheck, Zap, Sparkles } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, ShieldCheck, Zap, Sparkles } from "lucide-react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -398,7 +399,7 @@ const Login = () => {
           100% { background-position: 0% 50%; }
         }
         .animate-gradient-text {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
+          background: linear-gradient(135deg, #f67963, #7b72d4, #f67963, #f67963);
           background-size: 200% 200%;
           -webkit-background-clip: text;
           background-clip: text;
@@ -409,8 +410,8 @@ const Login = () => {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
         }
         input:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0px 1000px #f8faff inset !important;
-          -webkit-text-fill-color: #0f172a !important;
+          -webkit-box-shadow: 0 0 0px 1000px #fffaf6 inset !important;
+          -webkit-text-fill-color: #16132e !important;
         }
         .input-field { transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .input-field:focus { transform: translateY(-1px); }
@@ -429,8 +430,8 @@ const Login = () => {
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-10 pt-28">
 
         {/* ✅ Pehla wala background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#dbeafe_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
-        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#fff1ee_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
+        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#16132e_1px,transparent_1px),linear-gradient(to_bottom,#16132e_1px,transparent_1px)] bg-[size:64px_64px]" />
         <div className="noise-bg absolute inset-0 opacity-[0.05] pointer-events-none" />
 
         <motion.div
@@ -442,13 +443,13 @@ const Login = () => {
           <motion.div
             variants={item}
             className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] rounded-3xl overflow-hidden border border-white/80 bg-white/60 backdrop-blur-2xl"
-            style={{ boxShadow: "0 32px_100px rgba(99,102,241,0.12), 0 8px 32px rgba(0,0,0,0.08)" }}
+            style={{ boxShadow: "0 32px_100px rgba(246,121,99,0.12), 0 8px 32px rgba(0,0,0,0.08)" }}
           >
 
             {/* ── LEFT PANEL ── */}
             <motion.div
               variants={item}
-              className="relative overflow-hidden p-9 sm:p-11 bg-[radial-gradient(circle_at_20%_20%,#dbeafe_0%,transparent_50%),radial-gradient(circle_at_80%_10%,#cffafe_0%,transparent_40%),radial-gradient(circle_at_60%_90%,#e9d5ff_0%,transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border-b lg:border-b-0 lg:border-r border-white/70"
+              className="relative overflow-hidden p-9 sm:p-11 bg-[radial-gradient(circle_at_20%_20%,#fff1ee_0%,transparent_50%),radial-gradient(circle_at_80%_10%,#fff1ee_0%,transparent_40%),radial-gradient(circle_at_60%_90%,#fdeadb_0%,transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border-b lg:border-b-0 lg:border-r border-white/70"
             >
               {/* Shine sweep */}
               <motion.div
@@ -597,7 +598,7 @@ const Login = () => {
                 {/* Submit */}
                 <motion.button
                   whileTap={{ scale: isDisabled ? 1 : 0.98 }}
-                  whileHover={{ scale: isDisabled ? 1 : 1.01, boxShadow: isDisabled ? "none" : "0 8px 30px rgba(99,102,241,0.35)" }}
+                  whileHover={{ scale: isDisabled ? 1 : 1.01, boxShadow: isDisabled ? "none" : "0 8px 30px rgba(246,121,99,0.35)" }}
                   type="submit" disabled={isDisabled}
                   className="w-full py-3.5 mt-1 bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-violet-200/60 flex items-center justify-center gap-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none tracking-wide overflow-hidden relative"
                 >
@@ -606,7 +607,7 @@ const Login = () => {
                       initial={{ x: "-100%" }} whileHover={{ x: "200%" }} transition={{ duration: 0.6 }} />
                   )}
                   <span className="relative flex items-center gap-2">
-                    {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" />Signing In…</> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
+                    {isLoading ? <><ButtonSpinner className="w-4 h-4 " />Signing In…</> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
                   </span>
                 </motion.button>
               </motion.form>
@@ -621,7 +622,7 @@ const Login = () => {
 
               {/* Google */}
               <motion.button
-                whileHover={{ scale: isDisabled ? 1 : 1.01, borderColor: "#c7d2fe", boxShadow: "0 4px 20px rgba(99,102,241,0.1)" }}
+                whileHover={{ scale: isDisabled ? 1 : 1.01, borderColor: "#ffc9bc", boxShadow: "0 4px 20px rgba(246,121,99,0.1)" }}
                 whileTap={{ scale: isDisabled ? 1 : 0.98 }}
                 onClick={handleGoogleClick} disabled={isDisabled}
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
@@ -629,7 +630,7 @@ const Login = () => {
               >
                 <motion.div className="absolute inset-0 bg-gradient-to-r from-violet-50/0 via-violet-50/50 to-indigo-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+                  <ButtonSpinner className="w-5 h-5  text-slate-400" />
                 ) : (
                   <motion.div className="w-5 h-5 flex-shrink-0" whileHover={{ scale: 1.1 }}>
                     <svg viewBox="0 0 48 48" className="w-full h-full">

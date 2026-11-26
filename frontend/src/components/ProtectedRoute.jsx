@@ -1,31 +1,9 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import InsightLoader from "./ui/InsightLoader";
 import { useAuth } from "../hooks/useAuth.js";
 
-// ─── Loading spinner ──────────────────────────────────────────────────────────
 const AuthLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-    <motion.div
-      className="flex flex-col items-center gap-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* Logo mark */}
-      <div className="relative w-12 h-12">
-        <motion.div
-          className="absolute inset-0 bg-indigo-600 rounded-xl"
-          animate={{ rotate: [45, 135, 225, 315, 405] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        />
-        <div className="absolute inset-[3px] bg-slate-50 dark:bg-slate-950 rounded-[9px]" />
-        <div className="absolute inset-[6px] bg-indigo-600 rounded-lg" />
-      </div>
-      <p className="text-sm font-semibold text-slate-400 dark:text-slate-500">
-        Checking access…
-      </p>
-    </motion.div>
-  </div>
+  <InsightLoader messages={["Checking access…", "Securing your session…"]} />
 );
 
 /**

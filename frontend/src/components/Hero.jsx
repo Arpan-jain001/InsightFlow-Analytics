@@ -1,408 +1,127 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Zap, TrendingUp, Activity, Terminal, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useRef, useEffect, useState } from "react";
-import { ResponsiveContainer, AreaChart, Area, Tooltip } from "recharts";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { CheckCircle2, ArrowRight, PlayCircle, Mail, Sparkles } from "lucide-react";
 
-const Counter = ({ to, suffix = "", duration = 2 }) => {
-  const [count, setCount] = useState(0);
+/* ───────── Isometric dashboard (right side) ───────── */
+const Chip = ({ children, tone = "mint" }) => (
+  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${tone === "mint" ? "bg-mint text-[#0b6b58]" : "bg-coral-soft text-coral-dark"}`}>{children}</span>
+);
 
-  useEffect(() => {
-    let start = 0;
-    const step = Math.ceil(to / (duration * 60));
-    const id = setInterval(() => {
-      start += step;
-      if (start >= to) {
-        setCount(to);
-        clearInterval(id);
-      } else {
-        setCount(start);
-      }
-    }, 1000 / 60);
-    return () => clearInterval(id);
-  }, [to, duration]);
-
-  return (
-    <span>
-      {count.toLocaleString()}
-      {suffix}
-    </span>
-  );
-};
-
-const ParticleGrid = () => {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const setSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    setSize();
-
-    const cols = Math.floor(canvas.width / 60);
-    const rows = Math.floor(canvas.height / 60);
-    const dots = [];
-
-    for (let x = 0; x < cols; x += 1) {
-      for (let y = 0; y < rows; y += 1) {
-        dots.push({
-          x: x * 60 + 30,
-          y: y * 60 + 30,
-          r: Math.random() * 1.2 + 0.3,
-          alpha: Math.random() * 0.4 + 0.05,
-          phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.015 + 0.005,
-        });
-      }
-    }
-
-    let frame;
-    const draw = (time) => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      dots.forEach((dot) => {
-        const alpha = dot.alpha * (0.5 + 0.5 * Math.sin(time * 0.001 * dot.speed * 60 + dot.phase));
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
-        ctx.fill();
-      });
-      frame = requestAnimationFrame(draw);
-    };
-
-    frame = requestAnimationFrame(draw);
-    window.addEventListener("resize", setSize);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", setSize);
-    };
-  }, []);
-
-  return <canvas ref={ref} className="absolute inset-0 pointer-events-none" style={{ opacity: 0.6 }} />;
-};
-
-const chartData = [
-  { t: "W1", sessions: 320, conversions: 95 },
-  { t: "W2", sessions: 510, conversions: 160 },
-  { t: "W3", sessions: 740, conversions: 270 },
-  { t: "W4", sessions: 620, conversions: 215 },
-  { t: "W5", sessions: 890, conversions: 360 },
-  { t: "W6", sessions: 1050, conversions: 430 },
-];
-
-const stats = [
-  { label: "Active Users", value: 12847, suffix: "", positive: true, change: "+14.2%" },
-  { label: "Conversion Rate", value: 68, suffix: "%", positive: true, change: "+3.1%" },
-  { label: "Sessions", value: 4320, suffix: "", positive: true, change: "+8.7%" },
-  { label: "Drop-off Risk", value: 12, suffix: "%", positive: false, change: "-2.4%" },
-];
-
-const DashboardMockup = () => (
-  <div
-    className="rounded-2xl overflow-hidden border border-[#0d2140] bg-[#020408]"
-    style={{ boxShadow: "0 0 60px #00e5ff0d, 0 20px 60px #00000099" }}
+const IsoCard = ({ className = "", delay = 0, children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.7, ease: "easeOut" }}
+    className={`absolute bg-white rounded-2xl p-4 shadow-[0_18px_40px_-14px_rgba(22,19,46,.35)] border border-line/70 ${className}`}
   >
-    <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-[#0d2140] bg-[#04080f]">
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-500/80" />
-        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-yellow-500/80" />
-        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-500/80" />
-        <span className="ml-2 text-[9px] sm:text-[10px] text-[#3d6080] hidden xs:block" style={{ fontFamily: "var(--font-mono)" }}>
-          dashboard.insightflow.ai - live
-        </span>
-      </div>
-      <span
-        className="text-[8px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded-md bg-[#10d99020] border border-[#10d99030] text-[#10d990]"
-        style={{ fontFamily: "var(--font-mono)" }}
-      >
-        LIVE
-      </span>
-    </div>
+    {children}
+  </motion.div>
+);
 
-    <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + index * 0.1 }}
-            className="p-2.5 sm:p-3 rounded-xl border border-[#0d2140] bg-[#060d18] hover:border-[#00e5ff30] transition-colors duration-300"
-          >
-            <p className="text-[8px] sm:text-[9px] text-[#3d6080] mb-1 uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-              {stat.label}
-            </p>
-            <p className="text-sm sm:text-lg font-black text-[#e8f4ff]" style={{ fontFamily: "var(--font-mono)" }}>
-              <Counter to={stat.value} suffix={stat.suffix} duration={1.5} />
-            </p>
-            <span className={`text-[9px] sm:text-[10px] font-bold ${stat.positive ? "text-[#10d990]" : "text-red-400"}`}>
-              {stat.change}
-            </span>
-          </motion.div>
-        ))}
-      </div>
+const FloatChip = ({ children, className = "", delay = 0 }) => (
+  <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay }}
+    className={`hidden sm:flex absolute z-20 items-center gap-2 rounded-full bg-white/75 backdrop-blur-xl border border-white px-3.5 py-2 text-[12px] font-bold text-ink shadow-[0_14px_34px_-14px_rgba(22,19,46,.45)] ${className}`}>
+    {children}
+  </motion.div>
+);
 
-      <div className="rounded-xl border border-[#0d2140] bg-[#04080f]/60 p-3 sm:p-4">
-        <div className="flex items-center justify-between mb-2 sm:mb-3">
-          <span className="text-[10px] sm:text-xs font-bold text-[#8ab4d4] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-            User Activity
-          </span>
-          <div className="flex gap-2 sm:gap-3 text-[9px] sm:text-[10px] text-[#3d6080]" style={{ fontFamily: "var(--font-mono)" }}>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#00e5ff]" />
-              <span className="hidden sm:inline">Sessions</span>
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#10d990]" />
-              <span className="hidden sm:inline">Conversions</span>
-            </span>
-          </div>
-        </div>
-        <div className="h-24 sm:h-32">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="gc1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="gc2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10d990" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10d990" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Tooltip
-                contentStyle={{
-                  background: "#060d18",
-                  border: "1px solid #0d2140",
-                  borderRadius: "10px",
-                  fontSize: "10px",
-                  fontFamily: "var(--font-mono)",
-                  color: "#8ab4d4",
-                }}
-              />
-              <Area type="monotone" dataKey="sessions" stroke="#00e5ff" fill="url(#gc1)" strokeWidth={1.5} dot={false} />
-              <Area type="monotone" dataKey="conversions" stroke="#10d990" fill="url(#gc2)" strokeWidth={1.5} dot={false} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+const IsoDashboard = () => (
+  <div className="relative h-[460px] sm:h-[520px] w-full" style={{ perspective: 1600 }}>
+    <FloatChip className="top-2 left-2 sm:left-6" delay={0}><span className="w-2 h-2 rounded-full bg-[#2bb89a] animate-pulse" />128 live visitors</FloatChip>
+    <FloatChip className="top-24 right-0 sm:right-2" delay={0.8}><Sparkles className="w-3.5 h-3.5 text-coral" />AI insight ready</FloatChip>
+    <FloatChip className="bottom-6 left-4 sm:left-12" delay={1.6}><span className="text-[#2bb89a]">▲ 12.4%</span> retention</FloatChip>
 
-      <motion.div
-        initial={{ opacity: 0, x: -16 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2 }}
-        className="flex items-start gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl bg-[#00e5ff06] border border-[#00e5ff15]"
-      >
-        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#00e5ff12] border border-[#00e5ff25] flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Terminal className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#00e5ff]" />
+    <div className="absolute left-1/2 top-1/2 w-[400px] h-[400px] -ml-[200px] -mt-[200px] scale-[.78] sm:scale-100"
+         style={{ transform: "rotateX(58deg) rotateZ(-38deg)", transformStyle: "preserve-3d" }}>
+
+      <IsoCard className="left-0 top-4 w-[150px]" delay={0.1}>
+        <p className="text-[10px] font-semibold text-muted">Visitors</p>
+        <p className="text-2xl font-extrabold text-ink mt-1">9,350</p>
+        <div className="mt-3 h-2 rounded-full bg-line overflow-hidden"><div className="h-full w-3/5 rounded-full bg-amber-brand" /></div>
+        <div className="mt-2 flex gap-1 items-end h-8">
+          {[40, 70, 50, 90, 60, 80].map((h, i) => <span key={i} className="flex-1 rounded-sm bg-cream-2" style={{ height: `${h}%` }} />)}
         </div>
-        <div className="min-w-0">
-          <p className="text-[8px] sm:text-[9px] text-[#00e5ff] uppercase tracking-widest mb-0.5" style={{ fontFamily: "var(--font-mono)" }}>
-            AI_INSIGHT - HIGH_PRIORITY
-          </p>
-          <p className="text-[10px] sm:text-[11px] text-[#8ab4d4] leading-relaxed">
-            Mobile checkout is showing <span className="text-[#00e5ff] font-semibold">23% higher drop-off</span>.
-            Recommended action: shorten the third step and reduce required form fields.
-          </p>
+      </IsoCard>
+
+      <IsoCard className="left-[170px] top-0 w-[210px]" delay={0.25}>
+        <div className="flex items-center justify-between"><p className="text-[10px] font-semibold text-muted">Retained visitors</p><Chip>▲ 12.4%</Chip></div>
+        <p className="text-2xl font-extrabold text-ink mt-1">140,948</p>
+        <div className="mt-3 h-2 rounded-full bg-line overflow-hidden"><div className="h-full w-4/5 rounded-full bg-indigo-brand" /></div>
+        <p className="mt-2 text-[9px] text-muted">Predicted by XGBoost · 30 day</p>
+      </IsoCard>
+
+      <IsoCard className="left-[40px] top-[150px] w-[260px]" delay={0.4}>
+        <div className="flex items-center justify-between"><p className="text-[11px] font-bold text-ink">Recent Sessions</p><Chip tone="coral">Live</Chip></div>
+        <svg viewBox="0 0 220 90" className="mt-2 w-full">
+          <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#3b2fa8" stopOpacity=".28" /><stop offset="1" stopColor="#3b2fa8" stopOpacity="0" /></linearGradient></defs>
+          <path d="M0 78 C20 70 30 60 48 64 S75 20 95 18 S120 60 140 52 S175 28 220 40 V90 H0Z" fill="url(#g)" />
+          <path d="M0 78 C20 70 30 60 48 64 S75 20 95 18 S120 60 140 52 S175 28 220 40" fill="none" stroke="#3b2fa8" strokeWidth="2.2" strokeLinecap="round" />
+          <circle cx="95" cy="18" r="4" fill="#fff" stroke="#3b2fa8" strokeWidth="2" />
+        </svg>
+      </IsoCard>
+
+      <IsoCard className="left-[250px] top-[140px] w-[140px]" delay={0.55}>
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-slate-200" /><span className="w-6 h-6 rounded-full bg-slate-300 -ml-3" />
         </div>
-      </motion.div>
+        <p className="mt-2 text-[9px] text-muted">Gemini insight</p>
+        <p className="text-[11px] font-semibold text-ink leading-snug">Mobile users drop off at step 3.</p>
+      </IsoCard>
+
+      <IsoCard className="left-[10px] top-[300px] w-[160px]" delay={0.7}>
+        <p className="text-[10px] font-semibold text-muted">Total events</p>
+        <p className="text-2xl font-extrabold text-ink">122,637</p>
+        <Chip>▲ 8.1%</Chip>
+      </IsoCard>
+
+      <IsoCard className="left-[200px] top-[290px] w-[170px]" delay={0.85}>
+        <p className="text-[10px] font-semibold text-muted">Predicted to return</p>
+        <p className="text-2xl font-extrabold text-coral">87.3%</p>
+        <div className="mt-2 grid grid-cols-6 gap-1">{Array.from({ length: 12 }).map((_, i) => <span key={i} className={`h-1.5 rounded-full ${i < 9 ? "bg-coral" : "bg-line"}`} />)}</div>
+      </IsoCard>
     </div>
   </div>
 );
 
+/* ───────── Hero ───────── */
 const Hero = () => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-
-  const container = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-  };
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const submit = (e) => { e.preventDefault(); navigate("/signup", { state: { email } }); };
 
   return (
-    <section ref={ref} className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-16 px-4 sm:px-6 overflow-hidden bg-[#020408]">
-      <ParticleGrid />
-      <div className="absolute inset-0 cyber-grid opacity-60 pointer-events-none" />
+    <section className="relative overflow-hidden bg-white"
+      onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty("--hx", `${e.clientX - r.left}px`); e.currentTarget.style.setProperty("--hy", `${e.clientY - r.top}px`); }}>
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(520px circle at var(--hx,70%) var(--hy,30%), rgba(246,121,99,.11), transparent 60%)" }} />
+      <div className="absolute -top-40 -left-40 w-[620px] h-[620px] rounded-full bg-cream" />
+      <div className="absolute top-20 right-[-120px] w-[420px] h-[420px] rounded-full bg-coral-soft/70 blur-3xl" />
 
-      <div className="absolute top-24 left-0 w-px h-48 bg-gradient-to-b from-transparent via-[#00e5ff33] to-transparent" />
-      <div className="absolute top-24 right-0 w-px h-48 bg-gradient-to-b from-transparent via-[#7c3aed33] to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00e5ff22] to-transparent" />
+      <div className="container-x relative grid lg:grid-cols-[1.05fr_1fr] gap-6 items-center pt-32 pb-16 sm:pt-36 lg:pt-40 lg:pb-24">
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur-md border border-white/90 px-3.5 py-1.5 text-[12px] font-semibold text-ink-2 shadow-sm"><Sparkles className="w-3.5 h-3.5 text-coral" />Predictive analytics for EdTech and SaaS</span>
+          <h1 className="mt-6 text-[44px] sm:text-[58px] lg:text-[68px] leading-[1.03] font-extrabold text-ink">
+            Know which visitors will <span className="text-coral-grad">come back</span>, before they leave.
+          </h1>
+          <p className="mt-6 text-[16px] leading-relaxed text-muted max-w-[520px]">
+            InsightFlow tracks every interaction, predicts visitor retention with machine learning, and explains the results in plain language using Gemini AI.
+          </p>
 
-      <div className="absolute top-32 right-[10%] w-48 sm:w-96 h-48 sm:h-96 rounded-full bg-[#00e5ff] opacity-[0.04] blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-20 left-[5%] w-40 sm:w-80 h-40 sm:h-80 rounded-full bg-[#7c3aed] opacity-[0.06] blur-[80px] pointer-events-none" />
+          <form onSubmit={submit} className="mt-9 flex items-center gap-2 max-w-[540px] rounded-full bg-white/90 backdrop-blur-xl border border-white p-2 pl-5 shadow-[0_24px_60px_-24px_rgba(22,19,46,.4)] focus-within:ring-4 focus-within:ring-coral/20 transition">
+            <Mail className="w-[18px] h-[18px] shrink-0 text-slate-400" />
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Register using email address…" aria-label="Email address"
+              className="flex-1 min-w-0 bg-transparent px-1 py-3 text-[15px] font-medium text-ink placeholder:text-slate-400 outline-none" />
+            <button type="submit" className="btn btn-dark !rounded-full !py-3.5 !px-6 sm:!px-8 shrink-0">Submit <ArrowRight className="w-4 h-4" /></button>
+          </form>
 
-      <div className="absolute top-20 right-[8%] pointer-events-none hidden xl:block">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="w-64 h-64 rounded-full border border-[#00e5ff12]"
-          style={{ boxShadow: "inset 0 0 30px #00e5ff08" }}
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-6 rounded-full border border-[#7c3aed15]"
-        />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-14 rounded-full border border-[#00e5ff18]"
-        />
-        <div className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-[#00e5ff] blur-sm" />
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] font-semibold text-ink-2">
+            <span className="inline-flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-coral" />Free to register</span>
+            <span className="inline-flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-coral" />AI-powered insights</span>
+            <Link to="/demo" className="inline-flex items-center gap-2 text-coral-dark hover:underline"><PlayCircle className="w-4 h-4" />View private demo</Link>
+          </div>
+        </motion.div>
+
+        <IsoDashboard />
       </div>
 
-      <motion.div style={{ y, opacity }} className="relative z-10 max-w-7xl mx-auto w-full">
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] gap-10 lg:gap-14 xl:gap-16 items-center"
-        >
-          <div>
-            <motion.div
-              variants={item}
-              className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#00e5ff25] bg-[#00e5ff08] mb-6 sm:mb-8"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00e5ff] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00e5ff]" />
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-medium text-[#00e5ff] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-                An Intelligent User Behavior Analytics and Predictive Intelligence Platformy
-              </span>
-            </motion.div>
-
-            <motion.h1
-              variants={item}
-              className="text-[1.85rem] sm:text-[3.2rem] md:text-[4rem] lg:text-[4.55rem] xl:text-[5.1rem] font-black leading-[1.02] mb-5 sm:mb-6 tracking-[0.015em] sm:tracking-[0.03em] animate-glitch"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              <span className="block text-[#e8f4ff]">TRACK</span>
-              <span className="block text-gradient-cyan text-[0.82em] sm:text-[0.92em] lg:text-[0.8em]">
-                UNDERSTAND
-              </span>
-              <span className="block text-[#e8f4ff]">
-                OPTI<span className="text-gradient-violet">MIZE</span>
-              </span>
-            </motion.h1>
-
-            <motion.div variants={item} className="flex items-start sm:items-center gap-3 mb-6 sm:mb-8">
-              <div className="h-px w-8 sm:w-[60px] bg-[#00e5ff] flex-shrink-0 mt-2.5 sm:mt-0" />
-              <p className="text-xs sm:text-sm text-[#8ab4d4] leading-relaxed">
-                InsightFlow helps organizations track real-time user behavior, detect journey friction,
-                and generate AI-powered recommendations that improve conversions, retention, and product decisions.
-              </p>
-            </motion.div>
-
-            <motion.div variants={item} className="flex flex-wrap gap-2 mb-8 sm:mb-10">
-              {[
-                { icon: Zap, label: "Fast Setup" },
-                { icon: Activity, label: "Real-Time Tracking" },
-                { icon: TrendingUp, label: "AI Recommendations" },
-                { icon: Shield, label: "Secure RBAC" },
-              ].map(({ icon: Icon, label }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[#0d2140] bg-[#060d18] hover:border-[#00e5ff33] hover:bg-[#00e5ff08] transition-all duration-300"
-                >
-                  <Icon className="w-3 h-3 text-[#00e5ff]" />
-                  <span className="text-[9px] sm:text-[10px] text-[#8ab4d4] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.div variants={item} className="flex flex-col sm:flex-row gap-3">
-              <Link to="/signup" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={{ scale: 1.03, boxShadow: "0 0 32px #00e5ff55" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="group relative w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#00e5ff] text-[#020408] font-black rounded-xl overflow-hidden uppercase tracking-widest text-xs sm:text-sm"
-                  style={{ fontFamily: "var(--font-mono)" }}
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "200%" }}
-                    transition={{ duration: 0.6 }}
-                  />
-                  <span className="relative flex items-center justify-center gap-2">
-                    Create Workspace <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </motion.button>
-              </Link>
-
-              <Link to="/demo" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={{ scale: 1.02, borderColor: "#00e5ff44" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-transparent border border-[#0d2140] text-[#8ab4d4] hover:text-[#00e5ff] font-bold rounded-xl uppercase tracking-widest text-xs sm:text-sm transition-colors duration-300"
-                  style={{ fontFamily: "var(--font-mono)" }}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    <Terminal className="w-4 h-4" /> View Demo
-                  </span>
-                </motion.button>
-              </Link>
-            </motion.div>
-
-            <motion.div variants={item} className="flex gap-6 sm:gap-8 mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-[#0d2140]">
-              {[
-                { val: "50K+", label: "Events / Day" },
-                { val: "99.9%", label: "Availability" },
-                { val: "<5m", label: "Setup Time" },
-              ].map(({ val, label }) => (
-                <div key={label}>
-                  <p className="text-xl sm:text-2xl font-black text-[#00e5ff] text-glow-cyan" style={{ fontFamily: "var(--font-display)" }}>
-                    {val}
-                  </p>
-                  <p className="text-[9px] sm:text-[10px] text-[#3d6080] uppercase tracking-widest mt-0.5" style={{ fontFamily: "var(--font-mono)" }}>
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          <motion.div variants={item} className="relative hidden sm:block">
-            <div className="absolute inset-0 bg-[#00e5ff] opacity-[0.04] blur-[60px] rounded-3xl" />
-            <DashboardMockup />
-          </motion.div>
-        </motion.div>
-
-        <motion.div variants={item} className="relative mt-10 sm:hidden">
-          <div className="absolute inset-0 bg-[#00e5ff] opacity-[0.04] blur-[60px] rounded-3xl" />
-          <DashboardMockup />
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-5 h-8 rounded-full border border-[#00e5ff33] flex items-start justify-center pt-1">
-          <div className="w-1 h-2 bg-[#00e5ff] rounded-full" />
-        </div>
-        <p className="text-[9px] text-[#3d6080] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-          Scroll
-        </p>
-      </motion.div>
     </section>
   );
 };

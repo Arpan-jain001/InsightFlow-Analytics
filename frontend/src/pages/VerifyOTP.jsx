@@ -62,7 +62,7 @@ export default function VerifyOTP() {
     <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
 
       {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
 
       {/* MAIN CARD */}
       <motion.div

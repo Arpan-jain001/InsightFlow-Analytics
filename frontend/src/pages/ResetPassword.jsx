@@ -1,7 +1,8 @@
+import { ButtonSpinner } from "../components/ui/InsightLoader";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 
@@ -50,8 +51,8 @@ export default function ResetPassword() {
       <div className="relative min-h-screen flex items-center justify-center px-4 py-10 pt-28 overflow-hidden">
 
         {/* Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
-        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
+        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#16132e_1px,transparent_1px),linear-gradient(to_bottom,#16132e_1px,transparent_1px)] bg-[size:64px_64px]" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -105,7 +106,7 @@ export default function ResetPassword() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin w-4 h-4" />
+                  <ButtonSpinner className=" w-4 h-4" />
                   Updating...
                 </>
               ) : (

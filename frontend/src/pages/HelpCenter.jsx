@@ -27,18 +27,18 @@ import { SDK_PLATFORMS, getMinimalHtmlSnippet, getSdkQuickStartSteps } from "../
 import { SUPPORT_EMAIL } from "../lib/runtimeConfig";
 
 const C = {
-  bg: "#020408",
-  card: "#060d18",
-  border: "#1a2a4a",
-  green: "#10d990",
-  cyan: "#00e5ff",
-  purple: "#a855f7",
-  pink: "#f43f8e",
-  amber: "#f59e0b",
-  text: "#e8f4ff",
-  muted: "#8ab4d4",
-  dim: "#3d6080",
-  dimmer: "#1a3a6b",
+  bg: "#0f0d24",
+  card: "#18153a",
+  border: "#2b2850",
+  green: "#2bb89a",
+  cyan: "#f67963",
+  purple: "#7b72d4",
+  pink: "#f67963",
+  amber: "#f5a25d",
+  text: "#f4f3ff",
+  muted: "#a9a7c9",
+  dim: "#7c7aa3",
+  dimmer: "#3d3970",
 };
 
 const FAQS = [
@@ -162,12 +162,12 @@ const CodeSnippet = ({ code }) => {
   };
 
   return (
-    <div className="my-3 overflow-hidden rounded-xl border border-[#1a2a4a] bg-[#020810]">
-      <div className="flex items-center justify-between border-b border-[#1a2a4a] px-4 py-2">
+    <div className="my-3 overflow-hidden rounded-xl border border-[#2b2850] bg-[#020810]">
+      <div className="flex items-center justify-between border-b border-[#2b2850] px-4 py-2">
         <div className="flex gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-[#f43f8e44]" />
-          <div className="h-2.5 w-2.5 rounded-full bg-[#f59e0b44]" />
-          <div className="h-2.5 w-2.5 rounded-full bg-[#10d99044]" />
+          <div className="h-2.5 w-2.5 rounded-full bg-[#f6796344]" />
+          <div className="h-2.5 w-2.5 rounded-full bg-[#f5a25d44]" />
+          <div className="h-2.5 w-2.5 rounded-full bg-[#2bb89a44]" />
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -199,7 +199,7 @@ const FaqItem = ({ item, color, index }) => {
       style={{ borderColor: open ? `${color}30` : C.border, background: open ? `${color}08` : C.card }}
     >
       <button className="flex w-full items-center justify-between px-5 py-4 text-left" onClick={() => setOpen((value) => !value)}>
-        <span className="pr-4 text-sm font-bold text-[#e8f4ff]">{item.q}</span>
+        <span className="pr-4 text-sm font-bold text-[#f4f3ff]">{item.q}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="h-4 w-4 flex-shrink-0" style={{ color: open ? color : C.dim }} />
         </motion.div>
@@ -270,16 +270,16 @@ const HelpCenter = () => {
 
         <div className="relative mx-auto max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#10d99030] bg-[#10d99010] px-4 py-1.5">
-              <HelpCircle className="h-3.5 w-3.5 text-[#10d990]" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#10d990]" style={{ fontFamily: "var(--font-mono)" }}>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#2bb89a30] bg-[#2bb89a10] px-4 py-1.5">
+              <HelpCircle className="h-3.5 w-3.5 text-[#2bb89a]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2bb89a]" style={{ fontFamily: "var(--font-mono)" }}>
                 Help Center
               </span>
             </div>
           </motion.div>
 
           <motion.h1
-            className="mb-4 text-4xl font-black uppercase leading-tight text-[#e8f4ff] sm:text-5xl"
+            className="mb-4 text-4xl font-black uppercase leading-tight text-[#f4f3ff] sm:text-5xl"
             style={{ fontFamily: "var(--font-display)" }}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -526,7 +526,7 @@ const HelpCenter = () => {
               <a
                 href={`mailto:${SUPPORT_EMAIL}`}
                 className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all hover:opacity-90"
-                style={{ background: C.pink, color: "#020408", fontFamily: "var(--font-mono)" }}
+                style={{ background: C.pink, color: "#0f0d24", fontFamily: "var(--font-mono)" }}
               >
                 <Mail className="h-4 w-4" /> Email Support
               </a>
