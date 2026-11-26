@@ -1,7 +1,8 @@
+import { ButtonSpinner } from "../components/ui/InsightLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight, Loader2, CheckCircle2, User, Building2, Zap, ShieldCheck, Sparkles } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, CheckCircle2, User, Building2, Zap, ShieldCheck, Sparkles } from "lucide-react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { getPendingInvitation, setPendingInvitation } from "../lib/pendingInvitation.js";
@@ -343,7 +344,7 @@ const Signup = () => {
           100% { background-position: 0% 50%; }
         }
         .animate-gradient-text {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
+          background: linear-gradient(135deg, #f67963, #7b72d4, #f67963, #f67963);
           background-size: 200% 200%;
           -webkit-background-clip: text;
           background-clip: text;
@@ -354,8 +355,8 @@ const Signup = () => {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
         }
         input:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0px 1000px #f8faff inset !important;
-          -webkit-text-fill-color: #0f172a !important;
+          -webkit-box-shadow: 0 0 0px 1000px #fffaf6 inset !important;
+          -webkit-text-fill-color: #16132e !important;
         }
         .input-lift { transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
         .input-lift:focus { transform: translateY(-1px); }
@@ -376,15 +377,15 @@ const Signup = () => {
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-10 pt-28">
 
         {/* Background — same as Login */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#dbeafe_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
-        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#fff1ee_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
+        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#16132e_1px,transparent_1px),linear-gradient(to_bottom,#16132e_1px,transparent_1px)] bg-[size:64px_64px]" />
         <div className="noise-bg absolute inset-0 opacity-[0.05] pointer-events-none" />
 
         <motion.div className="relative w-full max-w-5xl" variants={container} initial="hidden" animate="show">
           <motion.div
             variants={item}
             className="grid grid-cols-1 lg:grid-cols-2 rounded-3xl overflow-hidden border border-white/80 bg-white/60 backdrop-blur-2xl"
-            style={{ boxShadow: "0 32px 100px rgba(99,102,241,0.12), 0 8px 32px rgba(0,0,0,0.08)" }}
+            style={{ boxShadow: "0 32px 100px rgba(246,121,99,0.12), 0 8px 32px rgba(0,0,0,0.08)" }}
           >
 
             {/* ── LEFT PANEL — FORM ── */}
@@ -547,7 +548,7 @@ const Signup = () => {
                 {/* Submit */}
                 <motion.button
                   whileTap={{ scale: isDisabled ? 1 : 0.98 }}
-                  whileHover={{ scale: isDisabled ? 1 : 1.01, boxShadow: isDisabled ? "none" : "0 8px 30px rgba(99,102,241,0.35)" }}
+                  whileHover={{ scale: isDisabled ? 1 : 1.01, boxShadow: isDisabled ? "none" : "0 8px 30px rgba(246,121,99,0.35)" }}
                   type="submit" disabled={isDisabled}
                   className="w-full py-3.5 mt-1 bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-violet-200/60 flex items-center justify-center gap-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none tracking-wide overflow-hidden relative"
                 >
@@ -559,7 +560,7 @@ const Signup = () => {
                   )}
                   <span className="relative flex items-center gap-2">
                     {isSubmitting
-                      ? <><Loader2 className="w-4 h-4 animate-spin" />Creating Account…</>
+                      ? <><ButtonSpinner className="w-4 h-4 " />Creating Account…</>
                       : <>Create Account <ArrowRight className="w-4 h-4" /></>
                     }
                   </span>
@@ -578,7 +579,7 @@ const Signup = () => {
             {/* ── RIGHT PANEL — INFO ── */}
             <motion.div
               variants={item}
-              className="relative overflow-hidden p-8 sm:p-10 bg-[radial-gradient(circle_at_20%_20%,#dbeafe_0%,transparent_50%),radial-gradient(circle_at_80%_10%,#cffafe_0%,transparent_40%),radial-gradient(circle_at_60%_90%,#e9d5ff_0%,transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border-t lg:border-t-0 lg:border-l border-white/60"
+              className="relative overflow-hidden p-8 sm:p-10 bg-[radial-gradient(circle_at_20%_20%,#fff1ee_0%,transparent_50%),radial-gradient(circle_at_80%_10%,#fff1ee_0%,transparent_40%),radial-gradient(circle_at_60%_90%,#fdeadb_0%,transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border-t lg:border-t-0 lg:border-l border-white/60"
             >
               {/* Shine sweep */}
               <motion.div

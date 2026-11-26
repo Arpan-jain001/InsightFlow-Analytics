@@ -1,8 +1,9 @@
+import { ButtonSpinner } from "../components/ui/InsightLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loader2, MailCheck, RefreshCw, CheckCircle2 } from "lucide-react";
+import { MailCheck, RefreshCw, CheckCircle2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const BASE_API_URL = import.meta.env.VITE_BACKEND_API_URL;
@@ -23,7 +24,7 @@ const SmsToast = ({ type = "info", message, onClose }) => {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
         <div className={`h-[3px] w-full ${bar}`} />
         <div className="px-4 py-3 flex gap-3 items-start">
-          <div className="h-9 w-9 rounded-xl bg-[#6366f1] text-white flex items-center justify-center text-xs font-black flex-shrink-0">PI</div>
+          <div className="h-9 w-9 rounded-xl bg-[#f67963] text-white flex items-center justify-center text-xs font-black flex-shrink-0">PI</div>
           <div className="flex-1">
             <div className="text-sm font-bold text-slate-900 flex items-center gap-1.5"><span>{badge}</span><span>InsightFlow</span></div>
             <div className="text-sm text-slate-600 mt-0.5">{message}</div>
@@ -180,8 +181,8 @@ const VerifyEmail = () => {
       </AnimatePresence>
 
       <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden px-4 py-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
-        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
+        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#16132e_1px,transparent_1px),linear-gradient(to_bottom,#16132e_1px,transparent_1px)] bg-[size:64px_64px]" />
 
         <motion.div
           className="relative w-full max-w-md"
@@ -220,7 +221,7 @@ const VerifyEmail = () => {
                   onKeyDown={(e) => handleKeyDown(e, i)}
                   maxLength={1}
                   inputMode="numeric"
-                  whileFocus={{ scale: 1.08, borderColor: "#6366f1" }}
+                  whileFocus={{ scale: 1.08, borderColor: "#f67963" }}
                   className={`w-12 h-14 text-center text-xl font-black rounded-xl border-2 transition-all focus:outline-none bg-white/90 text-slate-900 ${digit
                       ? "border-indigo-400 bg-indigo-50/50 shadow-sm shadow-indigo-100"
                       : "border-slate-200 hover:border-slate-300"
@@ -264,7 +265,7 @@ const VerifyEmail = () => {
               className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-black rounded-full transition-all shadow-lg shadow-indigo-200/60 hover:brightness-105 flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
             >
               {isLoading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Verifying…</>
+                <><ButtonSpinner className="w-4 h-4 " />Verifying…</>
               ) : success ? (
                 <><CheckCircle2 className="w-4 h-4" />Verified!</>
               ) : (
@@ -286,7 +287,7 @@ const VerifyEmail = () => {
                   className="text-sm text-indigo-600 hover:text-indigo-800 font-bold transition-colors flex items-center gap-1.5 mx-auto"
                 >
                   {isResending ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <ButtonSpinner className="w-3.5 h-3.5 " />
                   ) : (
                     <RefreshCw className="w-3.5 h-3.5" />
                   )}

@@ -64,10 +64,10 @@ const DAU = [
 ];
 
 const TOP_EVENTS = [
-  { name: "page_view", count: 4821, color: "#38bdf8" },
-  { name: "button_click", count: 2103, color: "#22c55e" },
-  { name: "add_to_cart", count: 1342, color: "#8b5cf6" },
-  { name: "checkout", count: 856, color: "#f59e0b" },
+  { name: "page_view", count: 4821, color: "#a1f4e6" },
+  { name: "button_click", count: 2103, color: "#2bb89a" },
+  { name: "add_to_cart", count: 1342, color: "#7b72d4" },
+  { name: "checkout", count: 856, color: "#f5a25d" },
   { name: "purchase", count: 412, color: "#f43f5e" },
 ];
 
@@ -89,19 +89,19 @@ const LIVE_FEED = [
 ];
 
 const EVENT_COLORS = {
-  page_view: "#38bdf8",
-  button_click: "#22c55e",
-  add_to_cart: "#8b5cf6",
-  checkout: "#f59e0b",
+  page_view: "#a1f4e6",
+  button_click: "#2bb89a",
+  add_to_cart: "#7b72d4",
+  checkout: "#f5a25d",
   purchase: "#f43f5e",
-  signup: "#14b8a6",
+  signup: "#2bb89a",
 };
 
 const WALKTHROUGH_METRICS = [
-  { label: "Organizations", value: "126", change: "+18%", icon: Building2, color: "#22c55e" },
-  { label: "Projects Live", value: "384", change: "+32%", icon: FolderKanban, color: "#38bdf8" },
-  { label: "Events Today", value: "9.5K", change: "+12%", icon: Activity, color: "#8b5cf6" },
-  { label: "Alerts Resolved", value: "94%", change: "+9%", icon: Shield, color: "#f59e0b" },
+  { label: "Organizations", value: "126", change: "+18%", icon: Building2, color: "#2bb89a" },
+  { label: "Projects Live", value: "384", change: "+32%", icon: FolderKanban, color: "#a1f4e6" },
+  { label: "Events Today", value: "9.5K", change: "+12%", icon: Activity, color: "#7b72d4" },
+  { label: "Alerts Resolved", value: "94%", change: "+9%", icon: Shield, color: "#f5a25d" },
 ];
 
 const INTEGRATION_STEPS = [
@@ -111,7 +111,7 @@ const INTEGRATION_STEPS = [
     title: "Create a workspace and project",
     detail: "Spin up a workspace, create a product, and generate a secure API key in one place.",
     icon: FolderKanban,
-    color: "#22c55e",
+    color: "#2bb89a",
   },
   {
     id: "install",
@@ -119,7 +119,7 @@ const INTEGRATION_STEPS = [
     title: "Install the InsightFlow snippet or package",
     detail: "Choose a paste-ready snippet or the npm package SDK for modern apps without extra setup friction.",
     icon: Code2,
-    color: "#38bdf8",
+    color: "#a1f4e6",
   },
   {
     id: "collect",
@@ -127,7 +127,7 @@ const INTEGRATION_STEPS = [
     title: "Capture live behavioral events",
     detail: "Track page views, clicks, checkout, payments, and exam attempts as they happen.",
     icon: Activity,
-    color: "#8b5cf6",
+    color: "#7b72d4",
   },
   {
     id: "optimize",
@@ -140,21 +140,21 @@ const INTEGRATION_STEPS = [
 ];
 
 const DEMO_PLATFORM_COLORS = {
-  html: "#f59e0b",
-  websdk: "#14b8a6",
-  react: "#38bdf8",
+  html: "#f5a25d",
+  websdk: "#2bb89a",
+  react: "#a1f4e6",
   nextjs: "#e5e7eb",
-  vue: "#22c55e",
+  vue: "#2bb89a",
   angular: "#f43f5e",
-  mern: "#8b5cf6",
-  wordpress: "#a855f7",
+  mern: "#7b72d4",
+  wordpress: "#7b72d4",
   reactnative: "#10b981",
-  flutter: "#06b6d4",
+  flutter: "#f67963",
 };
 
 const SDK_PLATFORMS = GUIDE_PLATFORMS.map((platform) => ({
   ...platform,
-  color: DEMO_PLATFORM_COLORS[platform.id] || "#38bdf8",
+  color: DEMO_PLATFORM_COLORS[platform.id] || "#a1f4e6",
 }));
 
 const FUNNEL_NOTES = [
@@ -168,19 +168,19 @@ const FUNNEL_NOTES = [
     icon: BadgeCheck,
     title: "Strong Signal",
     text: "Checkout to Purchase conversion remains healthy at 50%.",
-    color: "#22c55e",
+    color: "#2bb89a",
   },
   {
     icon: Lightbulb,
     title: "Recommended Test",
     text: "Run an A/B test on the Add to Cart CTA and supporting proof points.",
-    color: "#f59e0b",
+    color: "#f5a25d",
   },
   {
     icon: Target,
     title: "Retention Play",
     text: "Retarget users who reached Sign Up but never made it to cart.",
-    color: "#8b5cf6",
+    color: "#7b72d4",
   },
 ];
 
@@ -192,7 +192,7 @@ const SLIDES = [
     title: "A guided tour through the product experience",
     subtitle: "Showcasing the SaaS workflow, dashboards, live intelligence, and onboarding path.",
     icon: Sparkles,
-    color: "#22c55e",
+    color: "#2bb89a",
     duration: 7000,
   },
   {
@@ -202,7 +202,7 @@ const SLIDES = [
     title: "Launch tracking, verify setup, and unlock analytics",
     subtitle: "A clean operating model for workspaces, projects, SDK setup, and event collection.",
     icon: FolderKanban,
-    color: "#38bdf8",
+    color: "#a1f4e6",
     duration: 8000,
   },
   {
@@ -212,7 +212,7 @@ const SLIDES = [
     title: "Executive metrics and behavioral patterns in one place",
     subtitle: "Trend lines, top events, health signals, and real-time product motion.",
     icon: BarChart3,
-    color: "#8b5cf6",
+    color: "#7b72d4",
     duration: 9000,
   },
   {
@@ -232,7 +232,7 @@ const SLIDES = [
     title: "Explain where users drop and what to do next",
     subtitle: "A focused funnel layer built for growth, product teams, and operators.",
     icon: TrendingUp,
-    color: "#f59e0b",
+    color: "#f5a25d",
     duration: 8500,
   },
   {
@@ -242,7 +242,7 @@ const SLIDES = [
     title: "Get live in minutes with framework-ready snippets",
     subtitle: "The setup path stays simple while the analytics layer remains enterprise-ready.",
     icon: Code2,
-    color: "#14b8a6",
+    color: "#2bb89a",
     duration: 9500,
   },
   {
@@ -252,7 +252,7 @@ const SLIDES = [
     title: "Start collecting insights without slowing your team down",
     subtitle: "InsightFlow turns raw events into dashboards, alerts, and AI-backed action.",
     icon: Zap,
-    color: "#22c55e",
+    color: "#2bb89a",
     duration: 0,
   },
 ];
@@ -262,10 +262,10 @@ const TooltipCard = ({ active, payload, label }) => {
 
   return (
     <div
-      className="rounded-2xl border border-white/10 bg-[#07111d]/95 px-3 py-2 shadow-2xl"
+      className="rounded-2xl border border-white/10 bg-[#18153a]/95 px-3 py-2 shadow-2xl"
       style={{ backdropFilter: "blur(12px)" }}
     >
-      <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+      <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
         {label}
       </p>
       {payload.map((entry) => (
@@ -278,7 +278,7 @@ const TooltipCard = ({ active, payload, label }) => {
 };
 
 const DemoShell = ({ slide, children }) => (
-  <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#07111d]/85 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:p-8">
+  <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#18153a]/85 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:p-8">
     <div
       className="absolute inset-0 opacity-80"
       style={{
@@ -303,7 +303,7 @@ const SectionHeader = ({ slide }) => {
             <Icon className="h-5 w-5" style={{ color: slide.color }} />
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
               {slide.eyebrow}
             </p>
             <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: slide.color, fontFamily: "var(--font-mono)" }}>
@@ -314,14 +314,14 @@ const SectionHeader = ({ slide }) => {
         <h1 className="max-w-3xl text-3xl font-black leading-tight text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
           {slide.title}
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
           {slide.subtitle}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:min-w-[280px]">
         {WALKTHROUGH_METRICS.slice(0, 2).map(({ icon: IconMetric, label, value, change, color }) => (
-          <div key={label} className="rounded-2xl border border-white/10 bg-[#06101a]/80 p-4">
+          <div key={label} className="rounded-2xl border border-white/10 bg-[#16133a]/80 p-4">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
                 <IconMetric className="h-4 w-4" style={{ color }} />
@@ -333,7 +333,7 @@ const SectionHeader = ({ slide }) => {
             <p className="text-2xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
               {value}
             </p>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               {label}
             </p>
           </div>
@@ -356,7 +356,7 @@ const SceneOverview = ({ slide }) => (
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
-              className="rounded-3xl border border-white/10 bg-[#06101a]/90 p-5"
+              className="rounded-3xl border border-white/10 bg-[#16133a]/90 p-5"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
@@ -370,7 +370,7 @@ const SceneOverview = ({ slide }) => (
               <p className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
                 {value}
               </p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 {label}
               </p>
             </motion.div>
@@ -378,10 +378,10 @@ const SceneOverview = ({ slide }) => (
         </div>
 
         <div className="grid gap-4 md:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                   Product narrative
                 </p>
                 <h2 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -392,7 +392,7 @@ const SceneOverview = ({ slide }) => (
                 Multi-tenant SaaS
               </div>
             </div>
-            <p className="text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
               InsightFlow helps teams understand user behavior, identify drop-off points, monitor live product activity, and act on AI-backed suggestions from one collaborative analytics workspace.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -404,7 +404,7 @@ const SceneOverview = ({ slide }) => (
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                     {item}
                   </span>
                 </div>
@@ -412,16 +412,16 @@ const SceneOverview = ({ slide }) => (
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               Ideal teams
             </p>
             <div className="mt-5 space-y-3">
               {[
-                { label: "SaaS products", icon: Globe, color: "#38bdf8" },
-                { label: "E-commerce", icon: MousePointer, color: "#f59e0b" },
-                { label: "EdTech and exams", icon: Eye, color: "#8b5cf6" },
-                { label: "Growth teams", icon: TrendingUp, color: "#22c55e" },
+                { label: "SaaS products", icon: Globe, color: "#a1f4e6" },
+                { label: "E-commerce", icon: MousePointer, color: "#f5a25d" },
+                { label: "EdTech and exams", icon: Eye, color: "#7b72d4" },
+                { label: "Growth teams", icon: TrendingUp, color: "#2bb89a" },
               ].map(({ label, icon: Icon, color }) => (
                 <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}14` }}>
@@ -429,7 +429,7 @@ const SceneOverview = ({ slide }) => (
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white">{label}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                       Industry-ready analytics
                     </p>
                   </div>
@@ -443,7 +443,7 @@ const SceneOverview = ({ slide }) => (
       <div className="rounded-[28px] border border-white/10 bg-[#050c14]/90 p-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               Live readiness
             </p>
             <h3 className="mt-1 text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -460,10 +460,10 @@ const SceneOverview = ({ slide }) => (
 
         <div className="space-y-3">
           {[
-            { label: "AI summary generated", value: "2m ago", color: "#38bdf8" },
+            { label: "AI summary generated", value: "2m ago", color: "#a1f4e6" },
             { label: "Low health alert delivered", value: "6m ago", color: "#f43f5e" },
-            { label: "Weekly report queued", value: "10m ago", color: "#22c55e" },
-            { label: "SDK verification passed", value: "12m ago", color: "#8b5cf6" },
+            { label: "Weekly report queued", value: "10m ago", color: "#2bb89a" },
+            { label: "SDK verification passed", value: "12m ago", color: "#7b72d4" },
           ].map((item) => (
             <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
               <div className="mb-1 flex items-center justify-between gap-4">
@@ -495,7 +495,7 @@ const SceneWorkflow = ({ slide }) => (
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.08, duration: 0.45 }}
-            className="relative rounded-3xl border border-white/10 bg-[#06101a]/85 p-5"
+            className="relative rounded-3xl border border-white/10 bg-[#16133a]/85 p-5"
           >
             {index !== INTEGRATION_STEPS.length - 1 && (
               <div className="absolute left-[34px] top-[72px] h-10 w-px bg-gradient-to-b from-white/20 to-transparent" />
@@ -514,7 +514,7 @@ const SceneWorkflow = ({ slide }) => (
                   </h3>
                 </div>
               </div>
-              <p className="sm:ml-auto max-w-xl text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="sm:ml-auto max-w-xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
                 {detail}
               </p>
             </div>
@@ -523,8 +523,8 @@ const SceneWorkflow = ({ slide }) => (
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+          <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
             Architecture flow
           </p>
           <div className="mt-5 space-y-3">
@@ -540,7 +540,7 @@ const SceneWorkflow = ({ slide }) => (
                 <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[10px] font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>
                   {index + 1}
                 </div>
-                <div className="flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+                <div className="flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                   {item}
                 </div>
               </div>
@@ -548,16 +548,16 @@ const SceneWorkflow = ({ slide }) => (
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+          <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
             Why teams like the flow
           </p>
           <div className="mt-4 grid gap-3">
             {[
-              { icon: Shield, label: "Project-level API isolation", color: "#22c55e" },
-              { icon: Users, label: "Team invites and role control", color: "#38bdf8" },
-              { icon: Bell, label: "Weekly reports and alerting", color: "#f59e0b" },
-              { icon: Sparkles, label: "AI-backed recommendations", color: "#8b5cf6" },
+              { icon: Shield, label: "Project-level API isolation", color: "#2bb89a" },
+              { icon: Users, label: "Team invites and role control", color: "#a1f4e6" },
+              { icon: Bell, label: "Weekly reports and alerting", color: "#f5a25d" },
+              { icon: Sparkles, label: "AI-backed recommendations", color: "#7b72d4" },
             ].map(({ icon: Icon, label, color }) => (
               <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}12` }}>
@@ -581,12 +581,12 @@ const SceneAnalytics = ({ slide }) => (
       <div className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[
-            { label: "Total Events", value: "9,534", delta: "+12.4%", icon: Activity, color: "#38bdf8" },
-            { label: "Unique Users", value: "2,841", delta: "+8.1%", icon: Users, color: "#22c55e" },
-            { label: "Events per User", value: "3.4", delta: "+5.2%", icon: MousePointer, color: "#8b5cf6" },
-            { label: "DAU Today", value: "412", delta: "+18.7%", icon: TrendingUp, color: "#f59e0b" },
+            { label: "Total Events", value: "9,534", delta: "+12.4%", icon: Activity, color: "#a1f4e6" },
+            { label: "Unique Users", value: "2,841", delta: "+8.1%", icon: Users, color: "#2bb89a" },
+            { label: "Events per User", value: "3.4", delta: "+5.2%", icon: MousePointer, color: "#7b72d4" },
+            { label: "DAU Today", value: "412", delta: "+18.7%", icon: TrendingUp, color: "#f5a25d" },
           ].map(({ label, value, delta, icon: Icon, color }) => (
-            <div key={label} className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-5">
+            <div key={label} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}10` }}>
                   <Icon className="h-5 w-5" style={{ color }} />
@@ -598,17 +598,17 @@ const SceneAnalytics = ({ slide }) => (
               <p className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
                 {value}
               </p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 {label}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 14 day trend
               </p>
               <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -624,37 +624,37 @@ const SceneAnalytics = ({ slide }) => (
             <AreaChart data={DAU} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="usersFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#a1f4e6" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#a1f4e6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="sessionsFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.28} />
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2bb89a" stopOpacity={0.28} />
+                  <stop offset="95%" stopColor="#2bb89a" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#183147" vertical={false} />
-              <XAxis dataKey="d" tick={{ fill: "#7da6d4", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#7da6d4", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#2b2850" vertical={false} />
+              <XAxis dataKey="d" tick={{ fill: "#a9a7c9", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#a9a7c9", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
               <Tooltip content={<TooltipCard />} />
-              <Area type="monotone" dataKey="s" name="Sessions" stroke="#22c55e" strokeWidth={2} fill="url(#sessionsFill)" dot={false} />
-              <Area type="monotone" dataKey="u" name="Users" stroke="#38bdf8" strokeWidth={2.3} fill="url(#usersFill)" dot={false} activeDot={{ r: 4, fill: "#38bdf8" }} />
+              <Area type="monotone" dataKey="s" name="Sessions" stroke="#2bb89a" strokeWidth={2} fill="url(#sessionsFill)" dot={false} />
+              <Area type="monotone" dataKey="u" name="Users" stroke="#a1f4e6" strokeWidth={2.3} fill="url(#usersFill)" dot={false} activeDot={{ r: 4, fill: "#a1f4e6" }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       <div className="space-y-6">
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 Most frequent
               </p>
               <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
                 Top events
               </h3>
             </div>
-            <BarChart3 className="h-5 w-5 text-[#8b5cf6]" />
+            <BarChart3 className="h-5 w-5 text-[#7b72d4]" />
           </div>
 
           <div className="space-y-4">
@@ -664,7 +664,7 @@ const SceneAnalytics = ({ slide }) => (
                   <code className="text-[11px] font-semibold" style={{ color: event.color, fontFamily: "var(--font-mono)" }}>
                     {event.name}
                   </code>
-                  <span className="text-[11px] text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                     {event.count.toLocaleString()}
                   </span>
                 </div>
@@ -682,22 +682,22 @@ const SceneAnalytics = ({ slide }) => (
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
             AI health summary
           </p>
           <div className="mt-4 space-y-3">
             {[
-              { title: "Conversion health", text: "Healthy checkout completion with room to improve mid-funnel progression.", color: "#22c55e" },
-              { title: "Engagement trend", text: "Event volume is rising week over week across active projects.", color: "#38bdf8" },
-              { title: "Action priority", text: "Improve cart entry and post-signup continuation to lift overall conversion.", color: "#f59e0b" },
+              { title: "Conversion health", text: "Healthy checkout completion with room to improve mid-funnel progression.", color: "#2bb89a" },
+              { title: "Engagement trend", text: "Event volume is rising week over week across active projects.", color: "#a1f4e6" },
+              { title: "Action priority", text: "Improve cart entry and post-signup continuation to lift overall conversion.", color: "#f5a25d" },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-4">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
                   <p className="text-sm font-bold text-white">{item.title}</p>
                 </div>
-                <p className="text-xs leading-6 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+                <p className="text-xs leading-6 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
                   {item.text}
                 </p>
               </div>
@@ -738,7 +738,7 @@ const SceneLive = ({ slide }) => {
       <SectionHeader slide={slide} />
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="h-3 w-3 rounded-full bg-rose-400 animate-pulse" />
@@ -751,7 +751,7 @@ const SceneLive = ({ slide }) => {
                 </h3>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
               {liveCount} new events
             </div>
           </div>
@@ -768,18 +768,18 @@ const SceneLive = ({ slide }) => {
                   className="grid items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 sm:grid-cols-[auto_1fr_auto_auto]"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: EVENT_COLORS[item.event] || "#7da6d4" }} />
-                    <code className="text-[11px] font-semibold" style={{ color: EVENT_COLORS[item.event] || "#d8ecff", fontFamily: "var(--font-mono)" }}>
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: EVENT_COLORS[item.event] || "#a9a7c9" }} />
+                    <code className="text-[11px] font-semibold" style={{ color: EVENT_COLORS[item.event] || "#e4e2f8", fontFamily: "var(--font-mono)" }}>
                       {item.event}
                     </code>
                   </div>
-                  <span className="text-[11px] text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                     {item.user}
                   </span>
-                  <span className="text-[11px] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-[11px] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                     {item.page}
                   </span>
-                  <span className="text-[11px] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="text-[11px] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                     {item.time}
                   </span>
                 </motion.div>
@@ -789,8 +789,8 @@ const SceneLive = ({ slide }) => {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               Event distribution
             </p>
             <div className="mt-4 h-[220px]">
@@ -808,7 +808,7 @@ const SceneLive = ({ slide }) => {
               {TOP_EVENTS.map((event) => (
                 <div key={event.name} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-2">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: event.color }} />
-                  <span className="flex-1 text-[11px] text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <span className="flex-1 text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                     {event.name}
                   </span>
                   <span className="text-[11px]" style={{ color: event.color, fontFamily: "var(--font-mono)" }}>
@@ -819,15 +819,15 @@ const SceneLive = ({ slide }) => {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               Alert routing
             </p>
             <div className="mt-4 grid gap-3">
               {[
                 { label: "Admin notifications", icon: Bell, color: "#f43f5e" },
-                { label: "Organizer health reports", icon: TrendingUp, color: "#22c55e" },
-                { label: "Grace period reminders", icon: Clock3, color: "#f59e0b" },
+                { label: "Organizer health reports", icon: TrendingUp, color: "#2bb89a" },
+                { label: "Grace period reminders", icon: Clock3, color: "#f5a25d" },
               ].map(({ label, icon: Icon, color }) => (
                 <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}12` }}>
@@ -835,7 +835,7 @@ const SceneLive = ({ slide }) => {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">{label}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                       Real-time delivery
                     </p>
                   </div>
@@ -854,10 +854,10 @@ const SceneFunnels = ({ slide }) => (
     <SectionHeader slide={slide} />
 
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
               Conversion funnel
             </p>
             <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -871,7 +871,7 @@ const SceneFunnels = ({ slide }) => (
 
         <div className="space-y-4">
           {FUNNEL.map((step, index) => {
-            const color = TOP_EVENTS[index]?.color || "#38bdf8";
+            const color = TOP_EVENTS[index]?.color || "#a1f4e6";
             const previousUsers = FUNNEL[index - 1]?.users;
             const dropped = previousUsers ? previousUsers - step.users : 0;
 
@@ -880,7 +880,7 @@ const SceneFunnels = ({ slide }) => (
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-base font-bold text-white">{step.stage}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                       {step.users.toLocaleString()} users
                     </p>
                   </div>
@@ -916,7 +916,7 @@ const SceneFunnels = ({ slide }) => (
 
       <div className="space-y-4">
         {FUNNEL_NOTES.map(({ icon: Icon, title, text, color }) => (
-          <div key={title} className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-5">
+          <div key={title} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
             <div className="mb-3 flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: `${color}12` }}>
                 <Icon className="h-5 w-5" style={{ color }} />
@@ -928,14 +928,14 @@ const SceneFunnels = ({ slide }) => (
                 </p>
               </div>
             </div>
-            <p className="text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
               {text}
             </p>
           </div>
         ))}
 
-        <div className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-5">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
             Snapshot
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -946,7 +946,7 @@ const SceneFunnels = ({ slide }) => (
               { label: "Target segment", value: "Signup drop-off users" },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                   {item.label}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-white">{item.value}</p>
@@ -975,7 +975,7 @@ const SceneSdk = ({ slide }) => {
       <div className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
         <div className="space-y-4">
           {INTEGRATION_STEPS.map(({ id, number, title, detail, icon: Icon, color }) => (
-            <div key={id} className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-5">
+            <div key={id} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
                   <Icon className="h-5 w-5" style={{ color }} />
@@ -987,7 +987,7 @@ const SceneSdk = ({ slide }) => {
                   <p className="mt-1 text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
                     {title}
                   </p>
-                  <p className="mt-2 text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+                  <p className="mt-2 text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
                     {detail}
                   </p>
                 </div>
@@ -1000,7 +1000,7 @@ const SceneSdk = ({ slide }) => {
           <div className="border-b border-white/10 px-5 py-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                   SDK guide library
                 </p>
                 <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -1014,9 +1014,9 @@ const SceneSdk = ({ slide }) => {
                     onClick={() => setPlatform(item.id)}
                     className="rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all"
                     style={{
-                      borderColor: platform === item.id ? `${item.color}55` : "#183147",
+                      borderColor: platform === item.id ? `${item.color}55` : "#2b2850",
                       background: platform === item.id ? `${item.color}16` : "transparent",
-                      color: platform === item.id ? item.color : "#7da6d4",
+                      color: platform === item.id ? item.color : "#a9a7c9",
                       fontFamily: "var(--font-mono)",
                     }}
                   >
@@ -1032,22 +1032,22 @@ const SceneSdk = ({ slide }) => {
           </pre>
 
           <div className="flex flex-col gap-3 border-t border-white/10 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
-              <Key className="h-4 w-4 text-[#22c55e]" />
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
+              <Key className="h-4 w-4 text-[#2bb89a]" />
               Real credentials auto-fill after signup
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/signup"
                 className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#031018]"
-                style={{ background: "linear-gradient(135deg,#22c55e,#38bdf8)", fontFamily: "var(--font-display)" }}
+                style={{ background: "linear-gradient(135deg,#2bb89a,#a1f4e6)", fontFamily: "var(--font-display)" }}
               >
                 Start free
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-[#d8ecff]"
+                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 Open dashboard
@@ -1065,14 +1065,14 @@ const SceneCta = ({ slide }) => (
     <SectionHeader slide={slide} />
 
     <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-      <div className="rounded-[30px] border border-white/10 bg-[#06101a]/85 p-8">
-        <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+      <div className="rounded-[30px] border border-white/10 bg-[#16133a]/85 p-8">
+        <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
           Launch checklist
         </p>
         <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           Start collecting real product intelligence in minutes
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
           Create a workspace, connect your project, install the snippet, invite your team, and turn live behavior into reports, funnels, and AI-backed action.
         </p>
 
@@ -1085,7 +1085,7 @@ const SceneCta = ({ slide }) => (
           ].map((item) => (
             <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
               <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span className="text-xs text-[#d8ecff]" style={{ fontFamily: "var(--font-mono)" }}>
+              <span className="text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
                 {item}
               </span>
             </div>
@@ -1096,14 +1096,14 @@ const SceneCta = ({ slide }) => (
           <Link
             to="/signup"
             className="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-sm font-black uppercase tracking-[0.18em] text-[#031018]"
-            style={{ background: "linear-gradient(135deg,#22c55e,#38bdf8)", fontFamily: "var(--font-display)" }}
+            style={{ background: "linear-gradient(135deg,#2bb89a,#a1f4e6)", fontFamily: "var(--font-display)" }}
           >
             Create account
             <Zap className="h-4 w-4" />
           </Link>
           <Link
             to="/login"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[#d8ecff]"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Open product
@@ -1118,22 +1118,22 @@ const SceneCta = ({ slide }) => (
             title: "For organizers",
             text: "Monitor workspace health, invite members, receive reports, and drive AI-backed optimization.",
             icon: Users,
-            color: "#22c55e",
+            color: "#2bb89a",
           },
           {
             title: "For admins",
             text: "Control platform operations, route notifications, monitor adoption, and review system health.",
             icon: Shield,
-            color: "#38bdf8",
+            color: "#a1f4e6",
           },
           {
             title: "For product teams",
             text: "Use live events, funnel visibility, and user journey signals to improve conversion performance.",
             icon: TrendingUp,
-            color: "#8b5cf6",
+            color: "#7b72d4",
           },
         ].map(({ title, text, icon: Icon, color }) => (
-          <div key={title} className="rounded-3xl border border-white/10 bg-[#06101a]/85 p-6">
+          <div key={title} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
             <div className="mb-3 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: `${color}12` }}>
                 <Icon className="h-5 w-5" style={{ color }} />
@@ -1147,7 +1147,7 @@ const SceneCta = ({ slide }) => (
                 </p>
               </div>
             </div>
-            <p className="text-sm leading-7 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
               {text}
             </p>
           </div>
@@ -1233,9 +1233,9 @@ const Demo = () => {
 
       <div className="relative mx-auto flex w-full max-w-[1600px] gap-6 px-4 pb-28 pt-28 sm:px-6 xl:px-10">
         <aside className="sticky top-28 hidden h-[calc(100vh-10rem)] w-[260px] shrink-0 xl:block">
-          <div className="rounded-[28px] border border-white/10 bg-[#07111d]/80 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <div className="rounded-[28px] border border-white/10 bg-[#18153a]/80 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
             <div className="mb-5 px-2">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 Demo navigator
               </p>
               <h2 className="mt-2 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -1254,20 +1254,20 @@ const Demo = () => {
                     onClick={() => goTo(index)}
                     className="w-full rounded-2xl border px-4 py-3 text-left transition-all"
                     style={{
-                      borderColor: active ? `${item.color}55` : "#183147",
+                      borderColor: active ? `${item.color}55` : "#2b2850",
                       background: active ? `${item.color}12` : "rgba(255,255,255,0.02)",
                     }}
                   >
                     <div className="flex items-start gap-3">
                       <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: active ? `${item.color}44` : "#1c2a38" }}>
-                        <Icon className="h-4 w-4" style={{ color: active ? item.color : "#7da6d4" }} />
+                        <Icon className="h-4 w-4" style={{ color: active ? item.color : "#a9a7c9" }} />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: active ? item.color : "#7da6d4", fontFamily: "var(--font-mono)" }}>
+                        <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: active ? item.color : "#a9a7c9", fontFamily: "var(--font-mono)" }}>
                           {String(index + 1).padStart(2, "0")}
                         </p>
                         <p className="mt-1 text-sm font-bold text-white">{item.label}</p>
-                        <p className="mt-1 text-xs leading-5 text-[#8db2d8]" style={{ fontFamily: "var(--font-mono)" }}>
+                        <p className="mt-1 text-xs leading-5 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
                           {item.eyebrow}
                         </p>
                       </div>
@@ -1282,7 +1282,7 @@ const Demo = () => {
         <main className="relative z-10 min-w-0 flex-1">
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+              <div className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
                 InsightFlow / Product Demo
               </div>
               <div className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em]" style={{ color: currentSlide.color, fontFamily: "var(--font-mono)" }}>
@@ -1290,8 +1290,8 @@ const Demo = () => {
               </div>
             </div>
 
-            <div className="hidden rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#d8ecff] lg:flex lg:items-center lg:gap-2" style={{ fontFamily: "var(--font-mono)" }}>
-              <Eye className="h-4 w-4 text-[#38bdf8]" />
+            <div className="hidden rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#e4e2f8] lg:flex lg:items-center lg:gap-2" style={{ fontFamily: "var(--font-mono)" }}>
+              <Eye className="h-4 w-4 text-[#a1f4e6]" />
               Auto-play walkthrough
             </div>
           </div>
@@ -1311,13 +1311,13 @@ const Demo = () => {
       </div>
 
       <div className="fixed bottom-5 left-0 right-0 z-50 px-4">
-        <div className="mx-auto flex w-full max-w-[980px] flex-wrap items-center justify-center gap-3 rounded-[26px] border border-white/10 bg-[#07111d]/88 px-4 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:px-5">
+        <div className="mx-auto flex w-full max-w-[980px] flex-wrap items-center justify-center gap-3 rounded-[26px] border border-white/10 bg-[#18153a]/88 px-4 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:px-5">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handlePrev}
             disabled={slideIndex === 0}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#7da6d4] transition-all disabled:opacity-35"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#a9a7c9] transition-all disabled:opacity-35"
           >
             <ChevronLeft className="h-4 w-4" />
           </motion.button>
@@ -1355,7 +1355,7 @@ const Demo = () => {
             whileTap={{ scale: 0.95 }}
             onClick={handleNext}
             disabled={slideIndex === SLIDES.length - 1}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#7da6d4] transition-all disabled:opacity-35"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#a9a7c9] transition-all disabled:opacity-35"
           >
             <ChevronRight className="h-4 w-4" />
           </motion.button>
@@ -1363,7 +1363,7 @@ const Demo = () => {
           {slideIndex < SLIDES.length - 1 && (
             <button
               onClick={() => goTo(SLIDES.length - 1)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d8ecff]"
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               Skip to final
@@ -1371,7 +1371,7 @@ const Demo = () => {
             </button>
           )}
 
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#7da6d4]" style={{ fontFamily: "var(--font-mono)" }}>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
             {slideIndex + 1}/{SLIDES.length}
           </div>
         </div>

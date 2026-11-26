@@ -1,8 +1,9 @@
+import { ButtonSpinner } from "../components/ui/InsightLoader";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 const BASE_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
@@ -33,7 +34,7 @@ const VerifyLink = () => {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
 
       {/* Background same as login */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#e0f2fe_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#e9d5ff_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#dbeafe_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,#fff1ee_0%,transparent_45%),radial-gradient(circle_at_90%_15%,#fdeadb_0%,transparent_45%),radial-gradient(circle_at_40%_90%,#fff1ee_0%,transparent_45%),linear-gradient(180deg,#f8fafc_0%,#fff6ea_100%)]" />
 
       <AnimatePresence mode="wait">
 
@@ -46,7 +47,7 @@ const VerifyLink = () => {
             exit={{ opacity: 0 }}
             className="bg-white/70 backdrop-blur-xl border border-white rounded-3xl p-10 text-center shadow-xl"
           >
-            <Loader2 className="w-10 h-10 animate-spin text-violet-600 mx-auto mb-4" />
+            <ButtonSpinner className="w-10 h-10  text-violet-600 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-slate-800">Verifying your email...</h2>
             <p className="text-sm text-slate-400 mt-2">Please wait a moment</p>
           </motion.div>
