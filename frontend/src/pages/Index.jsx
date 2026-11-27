@@ -3,7 +3,7 @@ import Hero from "../components/Hero";
 import Features from "../components/Features";
 import HowItWorks from "../components/HowItWorks";
 import Marquee from "../components/Marquee";
-import FloatingAssistant from "../components/FloatingAssistant";
+import ChatBot from "../components/ChatBot";
 import AIInsights from "../components/AIInsights";
 import { UseCases, TeamSection, CTASection, Footer } from "../components/LandingComponents";
 
@@ -21,7 +21,7 @@ const Index = () => (
       <CTASection />
     </main>
     <Footer />
-    <FloatingAssistant />
+    <ChatBot />
   </div>
 );
 

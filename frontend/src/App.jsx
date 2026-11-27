@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+import InsightLoader from "./components/ui/InsightLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
@@ -19,28 +21,30 @@ import VerifyOTP from "./pages/VerifyOTP";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordOTP from "./pages/ResetPasswordOTP";
-import AdminOverview from "./admin/pages/AdminOverview";
-import AdminUsers from "./admin/pages/AdminUsers";
-import AdminOrganizations from "./admin/pages/AdminOrganizations";
-import AdminVerifications from "./admin/pages/AdminVerifications";
-import AdminAdmins from "./admin/pages/AdminAdmins";
-import AdminNotifications from "./admin/pages/AdminNotifications";
-import AdminSettings from "./admin/pages/AdminSettings";
-import AdminWorkspaces from "./admin/pages/AdminWorkspaces";
-import AdminProjects from "./admin/pages/AdminProjects";
-import OrgDashboard from "./organizer/pages/OrgDashboard";
-import OrgWorkspaces from "./organizer/pages/OrgWorkspaces";
-import OrgProjects from "./organizer/pages/OrgProjects";
-import OrgAnalytics from "./organizer/pages/OrgAnalytics";
-import OrgMembers from "./organizer/pages/OrgMembers";
-import OrgNotifications from "./organizer/pages/OrgNotifications";
-import OrgSettings from "./organizer/pages/OrgSettings";
-import UserDashboard from "./user/pages/UserDashboard";
-import UserNotifications from "./user/pages/UserNotifications";
-import UserProfile from "./user/pages/UserProfile";
-import UserSettings from "./user/pages/UserSettings";
-import UserWorkspaces from "./user/pages/UserWorkspaces";
-import UserProjectAnalytics from "./user/pages/UserProjectAnalytics";
+
+/* Dashboards load on demand, so admin code is never shipped to public visitors. */
+const AdminOverview = lazy(() => import("./admin/pages/AdminOverview"));
+const AdminUsers = lazy(() => import("./admin/pages/AdminUsers"));
+const AdminOrganizations = lazy(() => import("./admin/pages/AdminOrganizations"));
+const AdminVerifications = lazy(() => import("./admin/pages/AdminVerifications"));
+const AdminAdmins = lazy(() => import("./admin/pages/AdminAdmins"));
+const AdminNotifications = lazy(() => import("./admin/pages/AdminNotifications"));
+const AdminSettings = lazy(() => import("./admin/pages/AdminSettings"));
+const AdminWorkspaces = lazy(() => import("./admin/pages/AdminWorkspaces"));
+const AdminProjects = lazy(() => import("./admin/pages/AdminProjects"));
+const OrgDashboard = lazy(() => import("./organizer/pages/OrgDashboard"));
+const OrgWorkspaces = lazy(() => import("./organizer/pages/OrgWorkspaces"));
+const OrgProjects = lazy(() => import("./organizer/pages/OrgProjects"));
+const OrgAnalytics = lazy(() => import("./organizer/pages/OrgAnalytics"));
+const OrgMembers = lazy(() => import("./organizer/pages/OrgMembers"));
+const OrgNotifications = lazy(() => import("./organizer/pages/OrgNotifications"));
+const OrgSettings = lazy(() => import("./organizer/pages/OrgSettings"));
+const UserDashboard = lazy(() => import("./user/pages/UserDashboard"));
+const UserNotifications = lazy(() => import("./user/pages/UserNotifications"));
+const UserProfile = lazy(() => import("./user/pages/UserProfile"));
+const UserSettings = lazy(() => import("./user/pages/UserSettings"));
+const UserWorkspaces = lazy(() => import("./user/pages/UserWorkspaces"));
+const UserProjectAnalytics = lazy(() => import("./user/pages/UserProjectAnalytics"));
 
 const queryClient = new QueryClient();
 
@@ -56,6 +60,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <ScrollManager />
+          <Suspense fallback={<InsightLoader />}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/demo" element={<Demo />} />
@@ -98,6 +103,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

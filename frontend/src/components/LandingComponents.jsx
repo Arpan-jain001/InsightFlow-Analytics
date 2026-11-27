@@ -1,11 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, Building2, ShoppingCart, Briefcase, Users, Globe, Linkedin, Mail, Phone, ArrowRight, CheckCircle2 } from "lucide-react";
+import { GraduationCap, Building2, ShoppingCart, Briefcase, Users, Globe, Mail, Phone, ArrowRight, CheckCircle2 } from "lucide-react";
 import { SectionHead } from "./Features";
 import { Logo } from "./Navbar";
 import TiltCard from "./ui/TiltCard";
 import { ButtonSpinner } from "./ui/InsightLoader";
+
+const Linkedin = ({ className = "" }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9.75h4v11.5H3zM9.75 9.75h3.83v1.57h.06c.53-1 1.84-2.07 3.78-2.07 4.04 0 4.78 2.66 4.78 6.12v5.88h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.73 0-2 1.35-2 2.75v5.29h-4z" /></svg>
+);
 
 /* ───────── Use cases ───────── */
 const TARGETS = [
@@ -52,23 +56,28 @@ export const TeamSection = () => (
     <div className="container-x">
       <SectionHead eyebrow="Team G51" title="The people behind InsightFlow"
         sub="B.Tech (CSE) final year project, GLA University Mathura, under the guidance of Dr. Monica Dutta." />
-      <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* row 1 = 3 members, row 2 = 2 members, centered */}
+      <div className="mt-14 flex flex-wrap justify-center gap-6">
         {TEAM.map((m, i) => (
-          <motion.div key={m.name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-            className={`glass rounded-3xl p-7 text-center ${m.lead ? "sm:col-span-2 lg:col-span-1 ring-2 ring-coral/30" : ""}`}>
-            <span className={`mx-auto grid place-items-center w-16 h-16 rounded-2xl bg-gradient-to-br ${TONES[i]} text-white text-xl font-extrabold shadow-lg`}>
-              {m.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
-            </span>
-            <h3 className="mt-4 text-[18px] font-bold text-ink">{m.name}</h3>
-            <p className="text-[13px] font-semibold text-coral-dark">{m.role}</p>
-            <div className="mt-5 flex justify-center gap-2.5">
-              <a href={m.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="btn btn-ghost !p-2.5 !rounded-xl"><Linkedin className="w-4 h-4" /></a>
-              <a href={`mailto:${m.email.trim()}`} aria-label="Email" className="btn btn-ghost !p-2.5 !rounded-xl"><Mail className="w-4 h-4" /></a>
-              <a href={`tel:${m.phone}`} aria-label="Call" className="btn btn-ghost !p-2.5 !rounded-xl"><Phone className="w-4 h-4" /></a>
+          <TiltCard key={m.name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
+            className="group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] glass rounded-[28px] p-7 text-center transition-shadow hover:shadow-[0_30px_70px_-30px_rgba(22,19,46,.45)]">
+            <div className="relative mx-auto w-20 h-20">
+              <span className={`absolute -inset-1.5 rounded-[26px] bg-gradient-to-br ${TONES[i]} opacity-30 blur-md transition-opacity group-hover:opacity-70`} />
+              <span className={`relative grid place-items-center w-20 h-20 rounded-[22px] bg-gradient-to-br ${TONES[i]} text-white text-2xl font-extrabold shadow-lg ring-4 ring-white`}>
+                {m.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+              </span>
             </div>
-          </motion.div>
+            <h3 className="mt-5 text-[19px] font-extrabold text-ink">{m.name}</h3>
+            <span className={`mt-2 inline-block rounded-full px-3 py-1 text-[12px] font-bold ${m.lead ? "bg-coral text-white" : "bg-coral-soft text-coral-dark"}`}>{m.role}</span>
+            <div className="mt-6 flex justify-center gap-2.5">
+              <a href={m.linkedin} target="_blank" rel="noreferrer" aria-label={`${m.name} on LinkedIn`} className="grid place-items-center w-10 h-10 rounded-full bg-white border border-line text-ink-2 hover:bg-[#0a66c2] hover:text-white hover:border-transparent hover:-translate-y-0.5 transition"><Linkedin className="w-4 h-4" /></a>
+              <a href={`mailto:${m.email.trim()}`} aria-label={`Email ${m.name}`} className="grid place-items-center w-10 h-10 rounded-full bg-white border border-line text-ink-2 hover:bg-coral hover:text-white hover:border-transparent hover:-translate-y-0.5 transition"><Mail className="w-4 h-4" /></a>
+              <a href={`tel:${m.phone}`} aria-label={`Call ${m.name}`} className="grid place-items-center w-10 h-10 rounded-full bg-white border border-line text-ink-2 hover:bg-ink hover:text-white hover:border-transparent hover:-translate-y-0.5 transition"><Phone className="w-4 h-4" /></a>
+            </div>
+          </TiltCard>
         ))}
       </div>
+      <p className="mt-10 text-center text-sm font-semibold text-muted">Project Supervisor: <span className="text-ink">Dr. Monica Dutta</span> · Department of Computer Engineering and Applications, GLA University Mathura</p>
     </div>
   </section>
 );

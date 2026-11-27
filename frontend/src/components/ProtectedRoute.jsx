@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import InsightLoader from "./ui/InsightLoader";
+import NotFound from "../pages/NotFound";
 import { useAuth } from "../hooks/useAuth.js";
 
 const AuthLoader = () => (
@@ -18,6 +19,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const location = useLocation();
 
   if (loading) return <AuthLoader />;
+
+  /* Admin-only routes: anyone who is not a Super Admin sees a plain 404, so the URL is not revealed.
+     (Real protection is the backend. This only avoids advertising the route.) */
+  const adminOnly = allowedRoles.length > 0 && allowedRoles.every((r) => r === "SUPER_ADMIN");
+  if (adminOnly && user?.role !== "SUPER_ADMIN") return <NotFound />;
 
   if (!user) {
     return (
