@@ -1,1381 +1,378 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Activity,
-  AlertTriangle,
-  ArrowRight,
-  ArrowUpRight,
-  BadgeCheck,
-  BarChart3,
-  Bell,
-  Building2,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Clock3,
-  Code2,
-  Eye,
-  FolderKanban,
-  Globe,
-  Key,
-  Lightbulb,
-  MousePointer,
-  Pause,
-  Play,
-  SkipForward,
-  Sparkles,
-  Shield,
-  Target,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Activity, AlertTriangle, ArrowRight, BadgeCheck, BarChart3, Bell, Brain, Building2, Code2, FolderKanban, Key, Lightbulb, LayoutDashboard,
+  Pause, Play, Rocket, SkipForward, SkipBack, Sparkles, Target, TrendingUp, UserPlus, UserCircle, Users, Zap, Shield, ShieldCheck, Check, Lock } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Navbar from "../components/Navbar";
-import { SDK_PLATFORMS as GUIDE_PLATFORMS, getSdkGuide } from "../lib/sdkGuides";
+import { CountUp } from "../components/ui/motion";
+import { ROLES, INVITE_FLOW, WORKSPACE_ROLES } from "../data/knowledge";
+import CodeBlock, { buildPrompt } from "../components/ui/CodeBlock";
+import { SDK_PLATFORMS, getSdkGuide } from "../lib/sdkGuides";
 
-const DAU = [
-  { d: "Mar 11", u: 84, s: 130 },
-  { d: "Mar 12", u: 102, s: 158 },
-  { d: "Mar 13", u: 91, s: 142 },
-  { d: "Mar 14", u: 134, s: 201 },
-  { d: "Mar 15", u: 118, s: 177 },
-  { d: "Mar 16", u: 156, s: 234 },
-  { d: "Mar 17", u: 143, s: 215 },
-  { d: "Mar 18", u: 179, s: 268 },
-  { d: "Mar 19", u: 162, s: 243 },
-  { d: "Mar 20", u: 198, s: 297 },
-  { d: "Mar 21", u: 187, s: 280 },
-  { d: "Mar 22", u: 221, s: 332 },
-  { d: "Mar 23", u: 209, s: 314 },
-  { d: "Mar 24", u: 243, s: 365 },
-];
+const CORAL = "#f67963", INDIGO = "#3b2fa8", MINT = "#2bb89a", AMBER = "#f5a25d", INK = "#16132e";
 
+/* ───────── sample data ───────── */
+const DAU = [84, 102, 91, 134, 118, 156, 143, 179, 162, 198, 187, 221, 209, 243].map((u, i) => ({ d: `Mar ${11 + i}`, u, s: Math.round(u * 1.5) }));
 const TOP_EVENTS = [
-  { name: "page_view", count: 4821, color: "#a1f4e6" },
-  { name: "button_click", count: 2103, color: "#2bb89a" },
-  { name: "add_to_cart", count: 1342, color: "#7b72d4" },
-  { name: "checkout", count: 856, color: "#f5a25d" },
-  { name: "purchase", count: 412, color: "#f43f5e" },
+  { name: "page_view", count: 4821, color: INDIGO }, { name: "button_click", count: 2103, color: MINT },
+  { name: "add_to_cart", count: 1342, color: CORAL }, { name: "checkout", count: 856, color: AMBER }, { name: "purchase", count: 412, color: INK },
+];
+const FUNNEL = [{ stage: "Page View", pct: 100, users: 4821 }, { stage: "Sign Up", pct: 40, users: 1928 }, { stage: "Add to Cart", pct: 20, users: 965 }, { stage: "Checkout", pct: 10, users: 482 }, { stage: "Purchase", pct: 5, users: 241 }];
+const EVENT_COLORS = { page_view: INDIGO, button_click: MINT, add_to_cart: CORAL, checkout: AMBER, purchase: INK, signup: "#7b72d4" };
+const PAGES = ["/products", "/home", "/checkout", "/auth", "/pricing"];
+const KPIS = [
+  { label: "Organizations", to: 126, suffix: "", change: "+18%", icon: Building2, color: CORAL },
+  { label: "Projects live", to: 384, suffix: "", change: "+32%", icon: FolderKanban, color: INDIGO },
+  { label: "Events today", to: 9.5, suffix: "K", dec: 1, change: "+12%", icon: Activity, color: MINT },
+  { label: "Alerts resolved", to: 94, suffix: "%", change: "+9%", icon: Shield, color: AMBER },
+];
+const WORKFLOW = [
+  { icon: UserPlus, title: "Register your organization", text: "Create an account for your company." },
+  { icon: Building2, title: "Create a workspace", text: "One secure, isolated workspace per team." },
+  { icon: FolderKanban, title: "Add a project", text: "A project is one website or app." },
+  { icon: Key, title: "Receive a hashed API key", text: "Shown once, stored only as a hash." },
+  { icon: Code2, title: "Add the SDK script", text: "Pick your stack, copy the script or AI prompt." },
+  { icon: BadgeCheck, title: "Go live and verify", text: "Click Verify SDK. We check key and events." },
+  { icon: LayoutDashboard, title: "Open analytics and AI insights", text: "Page views, DAU, MAU and recommendations." },
+  { icon: Users, title: "Invite the team", text: "Add emails, assign Viewer or Admin roles." },
+];
+const NOTES = [
+  { icon: AlertTriangle, title: "Critical drop", text: "Biggest loss is Sign Up to Add to Cart, a 50% drop.", color: CORAL },
+  { icon: BadgeCheck, title: "Strong signal", text: "Checkout to Purchase holds a healthy 50% conversion.", color: MINT },
+  { icon: Lightbulb, title: "Recommended test", text: "A/B test the Add to Cart button and supporting proof points.", color: AMBER },
+  { icon: Target, title: "Retention play", text: "Retarget users who signed up but never reached the cart.", color: INDIGO },
 ];
 
-const FUNNEL = [
-  { stage: "Page View", pct: 100, users: 4821 },
-  { stage: "Sign Up", pct: 40, users: 1928 },
-  { stage: "Add to Cart", pct: 20, users: 965 },
-  { stage: "Checkout", pct: 10, users: 482 },
-  { stage: "Purchase", pct: 5, users: 241 },
+const SCENES = [
+  { id: "overview", label: "Overview", icon: Sparkles, title: "Platform at a glance", sub: "Workspaces, projects and event volume in one view." },
+  { id: "workflow", label: "How it works", icon: Rocket, title: "From signup to your first insight", sub: "The eight steps every organization follows." },
+  { id: "analytics", label: "Analytics", icon: BarChart3, title: "DAU, MAU and behaviour patterns", sub: "Trends and top events from your raw event stream." },
+  { id: "live", label: "Live feed", icon: Bell, title: "Watch events arrive in real time", sub: "Every click, view and purchase as it happens." },
+  { id: "funnels", label: "Funnels", icon: TrendingUp, title: "See where users drop and why", sub: "Funnel analysis with AI-backed next steps." },
+  { id: "sdk", label: "SDK setup", icon: Code2, title: "Ready-to-use script for your stack", sub: "Pick a framework, copy the script or an AI prompt." },
+  { id: "predict", label: "Predictions", icon: Brain, title: "Predict who will come back", sub: "ML predicts retention, AI explains it." },
+  { id: "roles", label: "Roles and team", icon: UserCircle, title: "Who can do what", sub: "User, Organizer and Super Admin, plus team invitations." },
 ];
+const DURATION = 9000;
 
-const LIVE_FEED = [
-  { event: "page_view", user: "anon_a3f1", page: "/products", time: "0s ago" },
-  { event: "button_click", user: "user_2819", page: "/home", time: "2s ago" },
-  { event: "add_to_cart", user: "anon_b921", page: "/products", time: "5s ago" },
-  { event: "checkout", user: "user_4401", page: "/checkout", time: "8s ago" },
-  { event: "purchase", user: "user_7732", page: "/checkout", time: "12s ago" },
-  { event: "signup", user: "anon_c119", page: "/auth", time: "15s ago" },
-];
+const Tip = ({ active, payload, label }) => active && payload?.length ? (
+  <div className="rounded-xl border border-line bg-white/95 px-3 py-2 text-[12px] shadow-lg backdrop-blur"><p className="font-bold text-ink">{label}</p>
+    {payload.map((p) => <p key={p.dataKey} style={{ color: p.color }}>{p.name}: <b>{p.value}</b></p>)}</div>
+) : null;
 
-const EVENT_COLORS = {
-  page_view: "#a1f4e6",
-  button_click: "#2bb89a",
-  add_to_cart: "#7b72d4",
-  checkout: "#f5a25d",
-  purchase: "#f43f5e",
-  signup: "#2bb89a",
-};
+const Panel = ({ children, className = "" }) => <div className={`rounded-3xl border border-line bg-white p-5 ${className}`}>{children}</div>;
+const Sample = () => <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Sample data</span>;
 
-const WALKTHROUGH_METRICS = [
-  { label: "Organizations", value: "126", change: "+18%", icon: Building2, color: "#2bb89a" },
-  { label: "Projects Live", value: "384", change: "+32%", icon: FolderKanban, color: "#a1f4e6" },
-  { label: "Events Today", value: "9.5K", change: "+12%", icon: Activity, color: "#7b72d4" },
-  { label: "Alerts Resolved", value: "94%", change: "+9%", icon: Shield, color: "#f5a25d" },
-];
-
-const INTEGRATION_STEPS = [
-  {
-    id: "create",
-    number: "01",
-    title: "Create a workspace and project",
-    detail: "Spin up a workspace, create a product, and generate a secure API key in one place.",
-    icon: FolderKanban,
-    color: "#2bb89a",
-  },
-  {
-    id: "install",
-    number: "02",
-    title: "Install the InsightFlow snippet or package",
-    detail: "Choose a paste-ready snippet or the npm package SDK for modern apps without extra setup friction.",
-    icon: Code2,
-    color: "#a1f4e6",
-  },
-  {
-    id: "collect",
-    number: "03",
-    title: "Capture live behavioral events",
-    detail: "Track page views, clicks, checkout, payments, and exam attempts as they happen.",
-    icon: Activity,
-    color: "#7b72d4",
-  },
-  {
-    id: "optimize",
-    number: "04",
-    title: "Unlock dashboards and AI guidance",
-    detail: "Move from raw events to real dashboards, funnel analysis, alerts, and recommendations.",
-    icon: Sparkles,
-    color: "#f43f5e",
-  },
-];
-
-const DEMO_PLATFORM_COLORS = {
-  html: "#f5a25d",
-  websdk: "#2bb89a",
-  react: "#a1f4e6",
-  nextjs: "#e5e7eb",
-  vue: "#2bb89a",
-  angular: "#f43f5e",
-  mern: "#7b72d4",
-  wordpress: "#7b72d4",
-  reactnative: "#10b981",
-  flutter: "#f67963",
-};
-
-const SDK_PLATFORMS = GUIDE_PLATFORMS.map((platform) => ({
-  ...platform,
-  color: DEMO_PLATFORM_COLORS[platform.id] || "#a1f4e6",
-}));
-
-const FUNNEL_NOTES = [
-  {
-    icon: AlertTriangle,
-    title: "Critical Drop",
-    text: "Biggest drop happens from Sign Up to Add to Cart with a 60% loss.",
-    color: "#f43f5e",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Strong Signal",
-    text: "Checkout to Purchase conversion remains healthy at 50%.",
-    color: "#2bb89a",
-  },
-  {
-    icon: Lightbulb,
-    title: "Recommended Test",
-    text: "Run an A/B test on the Add to Cart CTA and supporting proof points.",
-    color: "#f5a25d",
-  },
-  {
-    icon: Target,
-    title: "Retention Play",
-    text: "Retarget users who reached Sign Up but never made it to cart.",
-    color: "#7b72d4",
-  },
-];
-
-const SLIDES = [
-  {
-    id: "overview",
-    label: "Platform Story",
-    eyebrow: "InsightFlow Demo",
-    title: "A guided tour through the product experience",
-    subtitle: "Showcasing the SaaS workflow, dashboards, live intelligence, and onboarding path.",
-    icon: Sparkles,
-    color: "#2bb89a",
-    duration: 7000,
-  },
-  {
-    id: "workflow",
-    label: "How It Works",
-    eyebrow: "Company to insight",
-    title: "Launch tracking, verify setup, and unlock analytics",
-    subtitle: "A clean operating model for workspaces, projects, SDK setup, and event collection.",
-    icon: FolderKanban,
-    color: "#a1f4e6",
-    duration: 8000,
-  },
-  {
-    id: "analytics",
-    label: "Analytics",
-    eyebrow: "Operations view",
-    title: "Executive metrics and behavioral patterns in one place",
-    subtitle: "Trend lines, top events, health signals, and real-time product motion.",
-    icon: BarChart3,
-    color: "#7b72d4",
-    duration: 9000,
-  },
-  {
-    id: "live",
-    label: "Live Feed",
-    eyebrow: "Streaming activity",
-    title: "See user behavior arrive in real time",
-    subtitle: "Follow event flow with a live feed, event mix, and alert-oriented monitoring.",
-    icon: Bell,
-    color: "#f43f5e",
-    duration: 8000,
-  },
-  {
-    id: "funnels",
-    label: "Funnels",
-    eyebrow: "Conversion analysis",
-    title: "Explain where users drop and what to do next",
-    subtitle: "A focused funnel layer built for growth, product teams, and operators.",
-    icon: TrendingUp,
-    color: "#f5a25d",
-    duration: 8500,
-  },
-  {
-    id: "sdk",
-    label: "SDK Setup",
-    eyebrow: "Implementation",
-    title: "Get live in minutes with framework-ready snippets",
-    subtitle: "The setup path stays simple while the analytics layer remains enterprise-ready.",
-    icon: Code2,
-    color: "#2bb89a",
-    duration: 9500,
-  },
-  {
-    id: "cta",
-    label: "Get Started",
-    eyebrow: "Ready to launch",
-    title: "Start collecting insights without slowing your team down",
-    subtitle: "InsightFlow turns raw events into dashboards, alerts, and AI-backed action.",
-    icon: Zap,
-    color: "#2bb89a",
-    duration: 0,
-  },
-];
-
-const TooltipCard = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-
-  return (
-    <div
-      className="rounded-2xl border border-white/10 bg-[#18153a]/95 px-3 py-2 shadow-2xl"
-      style={{ backdropFilter: "blur(12px)" }}
-    >
-      <p className="mb-1 text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-        {label}
-      </p>
-      {payload.map((entry) => (
-        <p key={entry.dataKey} className="text-[11px] font-bold" style={{ color: entry.color, fontFamily: "var(--font-mono)" }}>
-          {entry.name}: {Number(entry.value || 0).toLocaleString()}
-        </p>
+/* ───────── scenes ───────── */
+const Overview = () => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {KPIS.map((k, i) => (
+        <motion.div key={k.label} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }} whileHover={{ y: -4 }}
+          className="rounded-2xl border border-line bg-white p-4 shadow-sm">
+          <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${k.color}1f`, color: k.color }}><k.icon className="h-5 w-5" /></span>
+          <p className="mt-3 text-[26px] font-extrabold leading-none text-ink"><CountUp to={k.to} suffix={k.suffix} decimals={k.dec || 0} /></p>
+          <p className="mt-1 flex items-center justify-between text-[12px] text-muted">{k.label}<span className="font-bold text-[#2bb89a]">{k.change}</span></p>
+        </motion.div>
       ))}
     </div>
-  );
-};
-
-const DemoShell = ({ slide, children }) => (
-  <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#18153a]/85 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:p-8">
-    <div
-      className="absolute inset-0 opacity-80"
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(56,189,248,0.18), transparent 30%), radial-gradient(circle at bottom left, rgba(34,197,94,0.12), transparent 28%), linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0))",
-      }}
-    />
-    <div className="absolute -right-16 top-10 h-36 w-36 rounded-full blur-3xl" style={{ background: `${slide.color}22` }} />
-    <div className="absolute left-10 top-24 h-24 w-24 rounded-full blur-3xl" style={{ background: `${slide.color}18` }} />
-    <div className="relative">{children}</div>
+    <Panel>
+      <div className="mb-2 flex items-center justify-between"><p className="font-bold text-ink">Daily active users</p><Sample /></div>
+      <div className="h-[230px]"><ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={DAU}><defs><linearGradient id="gU" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={CORAL} stopOpacity=".35" /><stop offset="1" stopColor={CORAL} stopOpacity="0" /></linearGradient></defs>
+          <CartesianGrid stroke="#ececf3" vertical={false} /><XAxis dataKey="d" tick={{ fontSize: 11, fill: "#9a9ab0" }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 11, fill: "#9a9ab0" }} axisLine={false} tickLine={false} width={32} />
+          <Tooltip content={<Tip />} /><Area dataKey="u" name="Users" stroke={CORAL} strokeWidth={2.5} fill="url(#gU)" /><Area dataKey="s" name="Sessions" stroke={INDIGO} strokeWidth={2} fill="transparent" />
+        </AreaChart></ResponsiveContainer></div>
+    </Panel>
   </div>
 );
 
-const SectionHeader = ({ slide }) => {
-  const Icon = slide.icon;
-
+const Workflow = ({ tick }) => {
+  const active = Math.min(WORKFLOW.length - 1, Math.floor((tick / 100) * WORKFLOW.length));
   return (
-    <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div className="max-w-3xl">
-        <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-            <Icon className="h-5 w-5" style={{ color: slide.color }} />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-              {slide.eyebrow}
-            </p>
-            <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: slide.color, fontFamily: "var(--font-mono)" }}>
-              {slide.label}
-            </p>
-          </div>
-        </div>
-        <h1 className="max-w-3xl text-3xl font-black leading-tight text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
-          {slide.title}
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-          {slide.subtitle}
-        </p>
-      </div>
+    <div className="grid gap-3 sm:grid-cols-2">
+      {WORKFLOW.map((w, i) => {
+        const on = i === active, done = i < active;
+        return (
+          <motion.div key={w.title} animate={{ scale: on ? 1.02 : 1 }} className={`flex gap-4 rounded-2xl border p-4 transition-colors ${on ? "border-coral/50 bg-white shadow-[0_18px_40px_-22px_rgba(246,121,99,.7)]" : done ? "border-line bg-white" : "border-line bg-white/50"}`}>
+            <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors ${on ? "bg-coral text-white" : done ? "bg-mint/50 text-[#0b6b58]" : "bg-slate-100 text-slate-400"}`}>{done ? <BadgeCheck className="h-5 w-5" /> : <w.icon className="h-5 w-5" />}</span>
+            <span><span className="text-[11px] font-bold tracking-widest text-coral-dark">STEP 0{i + 1}</span><span className="block font-bold text-ink">{w.title}</span><span className="block text-[13px] leading-6 text-muted">{w.text}</span></span>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
 
-      <div className="grid grid-cols-2 gap-3 lg:min-w-[280px]">
-        {WALKTHROUGH_METRICS.slice(0, 2).map(({ icon: IconMetric, label, value, change, color }) => (
-          <div key={label} className="rounded-2xl border border-white/10 bg-[#16133a]/80 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
-                <IconMetric className="h-4 w-4" style={{ color }} />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                {change}
-              </span>
-            </div>
-            <p className="text-2xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-              {value}
-            </p>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              {label}
-            </p>
+const Analytics = () => (
+  <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+    <Panel>
+      <div className="mb-3 flex items-center justify-between"><p className="font-bold text-ink">Top events</p><Sample /></div>
+      <div className="space-y-4">
+        {TOP_EVENTS.map((e, i) => (
+          <div key={e.name}>
+            <div className="mb-1.5 flex justify-between text-[13px]"><span className="font-mono font-semibold text-ink-2">{e.name}</span><span className="font-bold text-ink">{e.count.toLocaleString()}</span></div>
+            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100"><motion.div initial={{ width: 0 }} animate={{ width: `${(e.count / TOP_EVENTS[0].count) * 100}%` }} transition={{ delay: 0.15 + i * 0.1, duration: 0.8 }} className="h-full rounded-full" style={{ background: e.color }} /></div>
           </div>
         ))}
+      </div>
+    </Panel>
+    <Panel>
+      <p className="font-bold text-ink">Event mix</p>
+      <div className="h-[200px]"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={TOP_EVENTS} dataKey="count" nameKey="name" innerRadius={52} outerRadius={80} paddingAngle={3} stroke="none">{TOP_EVENTS.map((e) => <Cell key={e.name} fill={e.color} />)}</Pie><Tooltip content={<Tip />} /></PieChart></ResponsiveContainer></div>
+      <div className="grid grid-cols-2 gap-2 text-[11px] text-muted">{TOP_EVENTS.map((e) => <span key={e.name} className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full" style={{ background: e.color }} />{e.name}</span>)}</div>
+    </Panel>
+  </div>
+);
+
+const Live = () => {
+  const [feed, setFeed] = useState(() => Array.from({ length: 5 }, (_, i) => mk(i)));
+  function mk(i) { const ev = Object.keys(EVENT_COLORS)[Math.floor(Math.random() * 6)]; return { id: Date.now() + i + Math.random(), ev, user: `${Math.random() > 0.5 ? "anon" : "user"}_${Math.random().toString(16).slice(2, 6)}`, page: PAGES[Math.floor(Math.random() * PAGES.length)] }; }
+  useEffect(() => { const t = setInterval(() => setFeed((f) => [mk(0), ...f].slice(0, 7)), 1500); return () => clearInterval(t); }, []);
+  return (
+    <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+      <Panel>
+        <div className="mb-3 flex items-center gap-2 font-bold text-ink"><span className="h-2 w-2 animate-pulse rounded-full bg-[#2bb89a]" />Live event stream</div>
+        <div className="space-y-2 overflow-hidden">
+          <AnimatePresence initial={false}>
+            {feed.map((f) => (
+              <motion.div key={f.id} layout initial={{ opacity: 0, x: -20, height: 0 }} animate={{ opacity: 1, x: 0, height: "auto" }} exit={{ opacity: 0 }} className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
+                <i className="h-2.5 w-2.5 rounded-full" style={{ background: EVENT_COLORS[f.ev] }} />
+                <span className="w-28 font-mono text-[12.5px] font-bold text-ink">{f.ev}</span><span className="flex-1 truncate font-mono text-[12px] text-muted">{f.user}</span><span className="font-mono text-[12px] text-ink-2">{f.page}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </Panel>
+      <Panel className="flex flex-col justify-between">
+        <div><p className="font-bold text-ink">Active right now</p><p className="mt-2 text-[44px] font-extrabold leading-none text-coral">128</p><p className="mt-1 text-[13px] text-muted">visitors on your site</p></div>
+        <div className="mt-6 rounded-2xl bg-coral-soft p-4"><p className="flex items-center gap-2 text-[13px] font-bold text-coral-dark"><Bell className="h-4 w-4" />Alert</p><p className="mt-1 text-[13px] leading-6 text-ink-2">Checkout errors up 14% in the last 10 minutes.</p></div>
+      </Panel>
+    </div>
+  );
+};
+
+const Funnels = () => (
+  <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+    <Panel>
+      <div className="mb-4 flex items-center justify-between"><p className="font-bold text-ink">Conversion funnel</p><Sample /></div>
+      <div className="space-y-3">
+        {FUNNEL.map((f, i) => (
+          <div key={f.stage} className="flex items-center gap-3">
+            <span className="w-24 shrink-0 text-[12.5px] font-semibold text-ink-2">{f.stage}</span>
+            <div className="h-9 flex-1 overflow-hidden rounded-xl bg-slate-100"><motion.div initial={{ width: 0 }} animate={{ width: `${f.pct}%` }} transition={{ delay: i * 0.12, duration: 0.8 }} className="flex h-full items-center justify-end rounded-xl bg-gradient-to-r from-coral to-amber-brand px-3 text-[12px] font-bold text-white" style={{ minWidth: 56 }}>{f.pct}%</motion.div></div>
+            <span className="w-14 text-right font-mono text-[12px] text-muted">{f.users.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+    </Panel>
+    <div className="grid gap-3">
+      {NOTES.map((n, i) => (
+        <motion.div key={n.title} initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.08 }} className="flex gap-3 rounded-2xl border border-line bg-white p-4">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl" style={{ background: `${n.color}1f`, color: n.color }}><n.icon className="h-4 w-4" /></span>
+          <span><span className="block text-[13.5px] font-bold text-ink">{n.title}</span><span className="block text-[12.5px] leading-6 text-muted">{n.text}</span></span>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
+
+const Sdk = () => {
+  const [platform, setPlatform] = useState(SDK_PLATFORMS[0]?.id || "html");
+  const [tab, setTab] = useState("script");
+  const label = SDK_PLATFORMS.find((p) => p.id === platform)?.label || "your";
+  const code = useMemo(() => { try { return getSdkGuide({ platform, apiKey: "YOUR_API_KEY", projectId: "YOUR_PROJECT_ID", endpoint: "https://your-backend.onrender.com" }).code; } catch { return "// Select a platform"; } }, [platform]);
+  return (
+    <div>
+      <div className="mb-4 flex flex-wrap gap-2">
+        {SDK_PLATFORMS.map((p) => <button key={p.id} onClick={() => setPlatform(p.id)} className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-bold transition ${platform === p.id ? "bg-ink text-white" : "border border-line bg-white text-ink-2 hover:border-coral hover:text-coral"}`}>{p.label}</button>)}
+      </div>
+      <div className="mb-3 inline-flex rounded-full bg-slate-100 p-1">
+        {[["script", "Script"], ["prompt", "AI prompt"]].map(([id, t]) => <button key={id} onClick={() => setTab(id)} className={`rounded-full px-4 py-1.5 text-[12.5px] font-bold ${tab === id ? "bg-white text-ink shadow" : "text-muted"}`}>{t}</button>)}
+      </div>
+      <CodeBlock maxH="max-h-[300px]" label={`${label} · ${tab === "script" ? "snippet" : "prompt for your AI assistant"}`} code={tab === "script" ? code : buildPrompt(label, code)} />
+      <p className="mt-3 flex items-center gap-2 text-[12.5px] text-muted"><Key className="h-4 w-4 text-coral" />Your real key appears once after you create a project, and is stored only as a hash.</p>
+    </div>
+  );
+};
+
+const Predict = () => {
+  const P = 87, R = 52, C = 2 * Math.PI * R;
+  return (
+    <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+      <Panel className="flex flex-col items-center text-center">
+        <div className="flex w-full items-center justify-between"><p className="font-bold text-ink">7-day return probability</p><Sample /></div>
+        <div className="relative my-4 h-36 w-36">
+          <svg viewBox="0 0 120 120" className="-rotate-90"><circle cx="60" cy="60" r={R} stroke="#ececf3" strokeWidth="11" fill="none" />
+            <motion.circle cx="60" cy="60" r={R} stroke="url(#pg)" strokeWidth="11" fill="none" strokeLinecap="round" strokeDasharray={C} initial={{ strokeDashoffset: C }} animate={{ strokeDashoffset: C * (1 - P / 100) }} transition={{ duration: 1.4, ease: "easeOut" }} />
+            <defs><linearGradient id="pg"><stop offset="0" stopColor={CORAL} /><stop offset="1" stopColor={AMBER} /></linearGradient></defs></svg>
+          <span className="absolute inset-0 grid place-items-center text-[32px] font-extrabold text-ink">{P}%</span>
+        </div>
+        <p className="text-[13px] text-muted">Visitor <span className="font-mono font-bold text-ink-2">anon_a3f1</span> is likely to return.</p>
+      </Panel>
+      <div className="grid gap-4">
+        <Panel>
+          <p className="font-bold text-ink">Models compared</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[["XGBoost", "primary", true], ["Random Forest", "comparison"], ["Logistic Regression", "comparison"]].map(([n, r, p]) => <span key={n} className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-bold ${p ? "bg-coral text-white" : "bg-slate-100 text-ink-2"}`}>{n}<i className="ml-1.5 text-[10px] font-semibold not-italic opacity-70">{r}</i></span>)}
+          </div>
+          <p className="mt-3 text-[13px] leading-6 text-muted">Judged on precision, recall, F1 and ROC-AUC. The final model is chosen from experiments.</p>
+          <div className="mt-3 flex flex-wrap gap-2">{["page_views_7d", "sessions_7d", "visit_frequency", "days_since_last_visit"].map((f) => <code key={f} className="rounded-lg bg-slate-100 px-2 py-1 text-[11.5px] text-ink-2">{f}</code>)}</div>
+        </Panel>
+        <Panel className="bg-gradient-to-br from-coral-soft to-white">
+          <p className="flex items-center gap-2 text-[12px] font-bold text-coral-dark"><Sparkles className="h-4 w-4" />AI explanation</p>
+          <p className="mt-2 text-[14px] leading-7 text-ink-2">Visitors who view pricing twice and return within 3 days are most likely to come back. Send a reminder to those who have not visited in 4 days.</p>
+        </Panel>
       </div>
     </div>
   );
 };
 
-const SceneOverview = ({ slide }) => (
-  <DemoShell slide={slide}>
-    <SectionHeader slide={slide} />
 
-    <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
-      <div className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-3">
-          {WALKTHROUGH_METRICS.map(({ icon: Icon, label, value, change, color }) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45 }}
-              className="rounded-3xl border border-white/10 bg-[#16133a]/90 p-5"
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
-                  <Icon className="h-5 w-5" style={{ color }} />
-                </div>
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                  <ArrowUpRight className="h-3 w-3" />
-                  {change}
-                </span>
-              </div>
-              <p className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                {value}
-              </p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                {label}
-              </p>
+const RoleIcons = { USER: UserCircle, ORGANIZER: Building2, SUPER_ADMIN: ShieldCheck };
+const Roles = ({ tick }) => {
+  const step = Math.min(INVITE_FLOW.length - 1, Math.floor((tick / 100) * INVITE_FLOW.length));
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 lg:grid-cols-3">
+        {ROLES.map((r, i) => { const I = RoleIcons[r.id]; return (
+          <motion.div key={r.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }} className="relative overflow-hidden rounded-2xl border border-line bg-white p-4">
+            <span className="absolute inset-x-0 top-0 h-1" style={{ background: r.color }} />
+            <div className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${r.color}1a`, color: r.color }}><I className="h-5 w-5" /></span><code className="rounded-md bg-slate-100 px-2 py-0.5 text-[10.5px] text-slate-500">{r.dashboard || "restricted"}</code></div>
+            <p className="mt-3 text-[16px] font-extrabold text-ink">{r.label}</p><p className="text-[12px] font-semibold" style={{ color: r.color }}>Signup: {r.signup}</p>
+            <ul className="mt-2 space-y-1.5">{r.can.slice(0, 3).map((c) => <li key={c} className="flex gap-2 text-[12px] leading-5 text-muted"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#2bb89a]" />{c}</li>)}</ul>
+          </motion.div>); })}
+      </div>
+      <Panel>
+        <div className="mb-3 flex items-center justify-between"><p className="font-bold text-ink">Inviting a teammate</p><span className="flex gap-1.5">{WORKSPACE_ROLES.map((w) => <span key={w.name} className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-ink-2">{w.name}</span>)}</span></div>
+        <div className="grid gap-2 sm:grid-cols-5">
+          {INVITE_FLOW.map((s, i) => (
+            <motion.div key={s.title} animate={{ y: step === i ? -5 : 0 }} className={`rounded-xl border p-3 transition-colors ${step === i ? "border-coral/50 bg-coral-soft" : i < step ? "border-line bg-mint/20" : "border-line bg-slate-50"}`}>
+              <span className={`grid h-6 w-6 place-items-center rounded-lg text-[11px] font-extrabold ${step === i ? "bg-coral text-white" : i < step ? "bg-[#2bb89a] text-white" : "bg-white text-slate-400"}`}>{i < step ? <Check className="h-3 w-3" /> : i + 1}</span>
+              <p className="mt-2 text-[12.5px] font-bold text-ink">{s.title}</p>
             </motion.div>
           ))}
         </div>
-
-        <div className="grid gap-4 md:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                  Product narrative
-                </p>
-                <h2 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                  The AI analytics layer for modern digital products
-                </h2>
-              </div>
-              <div className="hidden rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-emerald-300 md:block" style={{ fontFamily: "var(--font-mono)" }}>
-                Multi-tenant SaaS
-              </div>
-            </div>
-            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-              InsightFlow helps teams understand user behavior, identify drop-off points, monitor live product activity, and act on AI-backed suggestions from one collaborative analytics workspace.
-            </p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {[
-                "Real-time event tracking",
-                "Funnel and retention analysis",
-                "Workspace and project isolation",
-                "AI insights and guided alerts",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              Ideal teams
-            </p>
-            <div className="mt-5 space-y-3">
-              {[
-                { label: "SaaS products", icon: Globe, color: "#a1f4e6" },
-                { label: "E-commerce", icon: MousePointer, color: "#f5a25d" },
-                { label: "EdTech and exams", icon: Eye, color: "#7b72d4" },
-                { label: "Growth teams", icon: TrendingUp, color: "#2bb89a" },
-              ].map(({ label, icon: Icon, color }) => (
-                <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}14` }}>
-                    <Icon className="h-4 w-4" style={{ color }} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-white">{label}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                      Industry-ready analytics
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[28px] border border-white/10 bg-[#050c14]/90 p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              Live readiness
-            </p>
-            <h3 className="mt-1 text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-              Platform pulse
-            </h3>
-          </div>
-          <div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] uppercase tracking-[0.18em] text-emerald-300" style={{ fontFamily: "var(--font-mono)" }}>
-              Live
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {[
-            { label: "AI summary generated", value: "2m ago", color: "#a1f4e6" },
-            { label: "Low health alert delivered", value: "6m ago", color: "#f43f5e" },
-            { label: "Weekly report queued", value: "10m ago", color: "#2bb89a" },
-            { label: "SDK verification passed", value: "12m ago", color: "#7b72d4" },
-          ].map((item) => (
-            <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-              <div className="mb-1 flex items-center justify-between gap-4">
-                <p className="text-xs font-semibold text-white">{item.label}</p>
-                <span className="text-[10px] uppercase tracking-[0.18em]" style={{ color: item.color, fontFamily: "var(--font-mono)" }}>
-                  {item.value}
-                </span>
-              </div>
-              <div className="h-1.5 rounded-full bg-white/6">
-                <div className="h-full rounded-full" style={{ width: "72%", background: item.color }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      </Panel>
     </div>
-  </DemoShell>
-);
-
-const SceneWorkflow = ({ slide }) => (
-  <DemoShell slide={slide}>
-    <SectionHeader slide={slide} />
-
-    <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-      <div className="space-y-4">
-        {INTEGRATION_STEPS.map(({ id, number, title, detail, icon: Icon, color }, index) => (
-          <motion.div
-            key={id}
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.08, duration: 0.45 }}
-            className="relative rounded-3xl border border-white/10 bg-[#16133a]/85 p-5"
-          >
-            {index !== INTEGRATION_STEPS.length - 1 && (
-              <div className="absolute left-[34px] top-[72px] h-10 w-px bg-gradient-to-b from-white/20 to-transparent" />
-            )}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}10` }}>
-                  <Icon className="h-6 w-6" style={{ color }} />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                    Step {number}
-                  </p>
-                  <h3 className="mt-1 text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    {title}
-                  </h3>
-                </div>
-              </div>
-              <p className="sm:ml-auto max-w-xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-                {detail}
-              </p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="space-y-4">
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-            Architecture flow
-          </p>
-          <div className="mt-5 space-y-3">
-            {[
-              "Client website or app",
-              "InsightFlow tracking script",
-              "Secure backend ingestion API",
-              "MongoDB event and project storage",
-              "Analytics engine and AI layer",
-              "Dashboards, alerts, and reports",
-            ].map((item, index) => (
-              <div key={item} className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[10px] font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>
-                  {index + 1}
-                </div>
-                <div className="flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                  {item}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-            Why teams like the flow
-          </p>
-          <div className="mt-4 grid gap-3">
-            {[
-              { icon: Shield, label: "Project-level API isolation", color: "#2bb89a" },
-              { icon: Users, label: "Team invites and role control", color: "#a1f4e6" },
-              { icon: Bell, label: "Weekly reports and alerting", color: "#f5a25d" },
-              { icon: Sparkles, label: "AI-backed recommendations", color: "#7b72d4" },
-            ].map(({ icon: Icon, label, color }) => (
-              <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}12` }}>
-                  <Icon className="h-4 w-4" style={{ color }} />
-                </div>
-                <p className="text-sm text-white">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </DemoShell>
-);
-
-const SceneAnalytics = ({ slide }) => (
-  <DemoShell slide={slide}>
-    <SectionHeader slide={slide} />
-
-    <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-      <div className="space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            { label: "Total Events", value: "9,534", delta: "+12.4%", icon: Activity, color: "#a1f4e6" },
-            { label: "Unique Users", value: "2,841", delta: "+8.1%", icon: Users, color: "#2bb89a" },
-            { label: "Events per User", value: "3.4", delta: "+5.2%", icon: MousePointer, color: "#7b72d4" },
-            { label: "DAU Today", value: "412", delta: "+18.7%", icon: TrendingUp, color: "#f5a25d" },
-          ].map(({ label, value, delta, icon: Icon, color }) => (
-            <div key={label} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}10` }}>
-                  <Icon className="h-5 w-5" style={{ color }} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                  {delta}
-                </span>
-              </div>
-              <p className="text-3xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                {value}
-              </p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                {label}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                14 day trend
-              </p>
-              <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                Daily users and sessions
-              </h3>
-            </div>
-            <div className="rounded-2xl border border-sky-400/20 bg-sky-400/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-sky-300" style={{ fontFamily: "var(--font-mono)" }}>
-              Auto-refresh active
-            </div>
-          </div>
-
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={DAU} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
-              <defs>
-                <linearGradient id="usersFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#a1f4e6" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#a1f4e6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="sessionsFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2bb89a" stopOpacity={0.28} />
-                  <stop offset="95%" stopColor="#2bb89a" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2b2850" vertical={false} />
-              <XAxis dataKey="d" tick={{ fill: "#a9a7c9", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#a9a7c9", fontSize: 10, fontFamily: "var(--font-mono)" }} axisLine={false} tickLine={false} />
-              <Tooltip content={<TooltipCard />} />
-              <Area type="monotone" dataKey="s" name="Sessions" stroke="#2bb89a" strokeWidth={2} fill="url(#sessionsFill)" dot={false} />
-              <Area type="monotone" dataKey="u" name="Users" stroke="#a1f4e6" strokeWidth={2.3} fill="url(#usersFill)" dot={false} activeDot={{ r: 4, fill: "#a1f4e6" }} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                Most frequent
-              </p>
-              <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                Top events
-              </h3>
-            </div>
-            <BarChart3 className="h-5 w-5 text-[#7b72d4]" />
-          </div>
-
-          <div className="space-y-4">
-            {TOP_EVENTS.map((event) => (
-              <div key={event.name}>
-                <div className="mb-2 flex items-center justify-between gap-4">
-                  <code className="text-[11px] font-semibold" style={{ color: event.color, fontFamily: "var(--font-mono)" }}>
-                    {event.name}
-                  </code>
-                  <span className="text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {event.count.toLocaleString()}
-                  </span>
-                </div>
-                <div className="h-2 rounded-full bg-white/6">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(event.count / TOP_EVENTS[0].count) * 100}%` }}
-                    transition={{ duration: 0.7 }}
-                    className="h-full rounded-full"
-                    style={{ background: event.color }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-            AI health summary
-          </p>
-          <div className="mt-4 space-y-3">
-            {[
-              { title: "Conversion health", text: "Healthy checkout completion with room to improve mid-funnel progression.", color: "#2bb89a" },
-              { title: "Engagement trend", text: "Event volume is rising week over week across active projects.", color: "#a1f4e6" },
-              { title: "Action priority", text: "Improve cart entry and post-signup continuation to lift overall conversion.", color: "#f5a25d" },
-            ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
-                  <p className="text-sm font-bold text-white">{item.title}</p>
-                </div>
-                <p className="text-xs leading-6 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </DemoShell>
-);
-
-const SceneLive = ({ slide }) => {
-  const [feed, setFeed] = useState(LIVE_FEED);
-  const [liveCount, setLiveCount] = useState(24);
-
-  useEffect(() => {
-    const eventNames = Object.keys(EVENT_COLORS);
-    const pages = ["/home", "/products", "/checkout", "/pricing", "/auth", "/courses"];
-
-    const interval = setInterval(() => {
-      setFeed((prev) => [
-        {
-          event: eventNames[Math.floor(Math.random() * eventNames.length)],
-          user: `anon_${Math.random().toString(36).slice(2, 6)}`,
-          page: pages[Math.floor(Math.random() * pages.length)],
-          time: "just now",
-        },
-        ...prev.slice(0, 7),
-      ]);
-      setLiveCount((count) => count + 1);
-    }, 1200);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <DemoShell slide={slide}>
-      <SectionHeader slide={slide} />
-
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="h-3 w-3 rounded-full bg-rose-400 animate-pulse" />
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-rose-300" style={{ fontFamily: "var(--font-mono)" }}>
-                  Live event stream
-                </p>
-                <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                  Events flowing every second
-                </h3>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-              {liveCount} new events
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <AnimatePresence initial={false}>
-              {feed.map((item, index) => (
-                <motion.div
-                  key={`${item.user}-${item.event}-${index}-${liveCount}`}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 sm:grid-cols-[auto_1fr_auto_auto]"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: EVENT_COLORS[item.event] || "#a9a7c9" }} />
-                    <code className="text-[11px] font-semibold" style={{ color: EVENT_COLORS[item.event] || "#e4e2f8", fontFamily: "var(--font-mono)" }}>
-                      {item.event}
-                    </code>
-                  </div>
-                  <span className="text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {item.user}
-                  </span>
-                  <span className="text-[11px] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {item.page}
-                  </span>
-                  <span className="text-[11px] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {item.time}
-                  </span>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              Event distribution
-            </p>
-            <div className="mt-4 h-[220px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={TOP_EVENTS} dataKey="count" innerRadius={58} outerRadius={88} paddingAngle={2} stroke="none">
-                    {TOP_EVENTS.map((event) => (
-                      <Cell key={event.name} fill={event.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-2 space-y-2">
-              {TOP_EVENTS.map((event) => (
-                <div key={event.name} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-2">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: event.color }} />
-                  <span className="flex-1 text-[11px] text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {event.name}
-                  </span>
-                  <span className="text-[11px]" style={{ color: event.color, fontFamily: "var(--font-mono)" }}>
-                    {event.count.toLocaleString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              Alert routing
-            </p>
-            <div className="mt-4 grid gap-3">
-              {[
-                { label: "Admin notifications", icon: Bell, color: "#f43f5e" },
-                { label: "Organizer health reports", icon: TrendingUp, color: "#2bb89a" },
-                { label: "Grace period reminders", icon: Clock3, color: "#f5a25d" },
-              ].map(({ label, icon: Icon, color }) => (
-                <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${color}12` }}>
-                    <Icon className="h-4 w-4" style={{ color }} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{label}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                      Real-time delivery
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </DemoShell>
   );
 };
 
-const SceneFunnels = ({ slide }) => (
-  <DemoShell slide={slide}>
-    <SectionHeader slide={slide} />
+/* ───────── page ───────── */
+const PATHS = { overview: "/organizer-dashboard", workflow: "/organizer-dashboard/projects", analytics: "/organizer-dashboard/analytics", live: "/organizer-dashboard/analytics", funnels: "/organizer-dashboard/analytics", sdk: "/organizer-dashboard/projects", predict: "/organizer-dashboard/analytics", roles: "/organizer-dashboard/members" };
+const VIEWS = { overview: Overview, workflow: Workflow, analytics: Analytics, live: Live, funnels: Funnels, sdk: Sdk, predict: Predict, roles: Roles };
 
-    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              Conversion funnel
-            </p>
-            <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-              From first visit to purchase
-            </h3>
-          </div>
-          <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>
-            Overall conversion 5%
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {FUNNEL.map((step, index) => {
-            const color = TOP_EVENTS[index]?.color || "#a1f4e6";
-            const previousUsers = FUNNEL[index - 1]?.users;
-            const dropped = previousUsers ? previousUsers - step.users : 0;
-
-            return (
-              <div key={step.stage}>
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-base font-bold text-white">{step.stage}</p>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                      {step.users.toLocaleString()} users
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {dropped > 0 && (
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-rose-300" style={{ fontFamily: "var(--font-mono)" }}>
-                        -{dropped.toLocaleString()} dropped
-                      </span>
-                    )}
-                    <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color, background: `${color}14`, fontFamily: "var(--font-mono)" }}>
-                      {step.pct}%
-                    </span>
-                  </div>
-                </div>
-                <div className="h-11 rounded-2xl bg-white/6 p-1">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${step.pct}%` }}
-                    transition={{ duration: 0.7, delay: index * 0.08 }}
-                    className="flex h-full items-center rounded-xl px-4"
-                    style={{ background: `linear-gradient(90deg, ${color}55, ${color}20)` }}
-                  >
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white" style={{ fontFamily: "var(--font-mono)" }}>
-                      {step.stage}
-                    </span>
-                  </motion.div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {FUNNEL_NOTES.map(({ icon: Icon, title, text, color }) => (
-          <div key={title} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: `${color}12` }}>
-                <Icon className="h-5 w-5" style={{ color }} />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-white">{title}</p>
-                <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                  AI recommendation
-                </p>
-              </div>
-            </div>
-            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-              {text}
-            </p>
-          </div>
-        ))}
-
-        <div className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-            Snapshot
-          </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {[
-              { label: "Biggest drop", value: "Sign Up -> Add to Cart" },
-              { label: "Strongest stage", value: "Checkout -> Purchase" },
-              { label: "Next test", value: "CTA and social proof" },
-              { label: "Target segment", value: "Signup drop-off users" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                  {item.label}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-white">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </DemoShell>
+const Cursor = ({ x, y, k }) => (
+  <motion.div className="pointer-events-none absolute left-0 top-0 z-40 hidden md:block" animate={{ x, y }} transition={{ type: "spring", stiffness: 70, damping: 15, mass: 0.9 }}>
+    <motion.span key={k} initial={{ scale: 0, opacity: 0.6 }} animate={{ scale: 2.6, opacity: 0 }} transition={{ delay: 0.75, duration: 0.7 }} className="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-coral/50" />
+    <svg width="26" height="26" viewBox="0 0 24 24" className="drop-shadow-[0_6px_10px_rgba(0,0,0,.35)]"><path d="M4 2l15 9-6.5 1.6L9 19z" fill="#fff" stroke="#16132e" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+  </motion.div>
 );
-
-const SceneSdk = ({ slide }) => {
-  const [platform, setPlatform] = useState("react");
-  const currentGuide = getSdkGuide({
-    platform,
-    apiKey: "insightflow_your_key_here",
-    projectId: "your_project_id",
-    endpoint: "https://your-backend.onrender.com",
-  });
-
-  return (
-    <DemoShell slide={slide}>
-      <SectionHeader slide={slide} />
-
-      <div className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
-        <div className="space-y-4">
-          {INTEGRATION_STEPS.map(({ id, number, title, detail, icon: Icon, color }) => (
-            <div key={id} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-5">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border" style={{ borderColor: `${color}33`, background: `${color}12` }}>
-                  <Icon className="h-5 w-5" style={{ color }} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                    Step {number}
-                  </p>
-                  <p className="mt-1 text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                    {title}
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-                    {detail}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#050c14]/95">
-          <div className="border-b border-white/10 px-5 py-4">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                  SDK guide library
-                </p>
-                <h3 className="mt-1 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                  Framework-ready snippet and package setup
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {SDK_PLATFORMS.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setPlatform(item.id)}
-                    className="rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all"
-                    style={{
-                      borderColor: platform === item.id ? `${item.color}55` : "#2b2850",
-                      background: platform === item.id ? `${item.color}16` : "transparent",
-                      color: platform === item.id ? item.color : "#a9a7c9",
-                      fontFamily: "var(--font-mono)",
-                    }}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <pre className="max-h-[460px] overflow-auto px-5 py-5 text-[11px] leading-6 text-[#b9d7f3]" style={{ fontFamily: "var(--font-mono)" }}>
-            {currentGuide.code}
-          </pre>
-
-          <div className="flex flex-col gap-3 border-t border-white/10 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-              <Key className="h-4 w-4 text-[#2bb89a]" />
-              Real credentials auto-fill after signup
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#031018]"
-                style={{ background: "linear-gradient(135deg,#2bb89a,#a1f4e6)", fontFamily: "var(--font-display)" }}
-              >
-                Start free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                Open dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </DemoShell>
-  );
-};
-
-const SceneCta = ({ slide }) => (
-  <DemoShell slide={slide}>
-    <SectionHeader slide={slide} />
-
-    <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-      <div className="rounded-[30px] border border-white/10 bg-[#16133a]/85 p-8">
-        <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-          Launch checklist
-        </p>
-        <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
-          Start collecting real product intelligence in minutes
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-          Create a workspace, connect your project, install the snippet, invite your team, and turn live behavior into reports, funnels, and AI-backed action.
-        </p>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {[
-            "Workspace and project setup",
-            "GitHub-style member invitation flow",
-            "Admin notifications and alerts",
-            "Weekly reports and health scoring",
-          ].map((item) => (
-            <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span className="text-xs text-[#e4e2f8]" style={{ fontFamily: "var(--font-mono)" }}>
-                {item}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link
-            to="/signup"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-sm font-black uppercase tracking-[0.18em] text-[#031018]"
-            style={{ background: "linear-gradient(135deg,#2bb89a,#a1f4e6)", fontFamily: "var(--font-display)" }}
-          >
-            Create account
-            <Zap className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            Open product
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {[
-          {
-            title: "For organizers",
-            text: "Monitor workspace health, invite members, receive reports, and drive AI-backed optimization.",
-            icon: Users,
-            color: "#2bb89a",
-          },
-          {
-            title: "For admins",
-            text: "Control platform operations, route notifications, monitor adoption, and review system health.",
-            icon: Shield,
-            color: "#a1f4e6",
-          },
-          {
-            title: "For product teams",
-            text: "Use live events, funnel visibility, and user journey signals to improve conversion performance.",
-            icon: TrendingUp,
-            color: "#7b72d4",
-          },
-        ].map(({ title, text, icon: Icon, color }) => (
-          <div key={title} className="rounded-3xl border border-white/10 bg-[#16133a]/85 p-6">
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: `${color}12` }}>
-                <Icon className="h-5 w-5" style={{ color }} />
-              </div>
-              <div>
-                <p className="text-lg font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                  {title}
-                </p>
-                <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color, fontFamily: "var(--font-mono)" }}>
-                  High-trust workflow
-                </p>
-              </div>
-            </div>
-            <p className="text-sm leading-7 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-              {text}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </DemoShell>
-);
-
-const SCENE_COMPONENTS = {
-  overview: SceneOverview,
-  workflow: SceneWorkflow,
-  analytics: SceneAnalytics,
-  live: SceneLive,
-  funnels: SceneFunnels,
-  sdk: SceneSdk,
-  cta: SceneCta,
-};
 
 const Demo = () => {
-  const [slideIndex, setSlideIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const timerRef = useRef(null);
-  const elapsedRef = useRef(0);
+  const [i, setI] = useState(0);
+  const [prog, setProg] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const [cur, setCur] = useState({ x: 60, y: 120, k: 0 });
+  const winRef = useRef(null), itemRefs = useRef([]), timer = useRef(null);
 
-  const goTo = useCallback((index) => {
-    const nextIndex = Math.max(0, Math.min(SLIDES.length - 1, index));
-    setSlideIndex(nextIndex);
-    setProgress(0);
-    elapsedRef.current = 0;
-  }, []);
-
-  const currentSlide = SLIDES[slideIndex];
-  const CurrentScene = SCENE_COMPONENTS[currentSlide.id];
-
-  const handlePrev = useCallback(() => goTo(slideIndex - 1), [goTo, slideIndex]);
-  const handleNext = useCallback(() => goTo(slideIndex + 1), [goTo, slideIndex]);
-
+  useEffect(() => { if (!playing) return; const t = setInterval(() => setProg((p) => Math.min(p + 100 / (DURATION / 60), 100)), 60); return () => clearInterval(t); }, [playing]);
+  const point = (n) => {
+    const w = winRef.current, b = itemRefs.current[n];
+    if (!w || !b || window.innerWidth < 768) return;
+    const wr = w.getBoundingClientRect(), br = b.getBoundingClientRect();
+    setCur((c) => ({ x: br.left - wr.left + br.width * 0.7, y: br.top - wr.top + br.height * 0.55, k: c.k + 1 }));
+  };
+  const go = (n) => { clearTimeout(timer.current); const m = (n + SCENES.length) % SCENES.length; point(m); setI(m); setProg(0); };
   useEffect(() => {
-    const duration = currentSlide.duration;
+    if (prog < 100) return;
+    const n = (i + 1) % SCENES.length;
+    point(n); setProg(0);
+    timer.current = setTimeout(() => setI(n), 900);
+    return () => clearTimeout(timer.current);
+  }, [prog]); // eslint-disable-line
+  useEffect(() => { const t = setTimeout(() => point(0), 600); return () => clearTimeout(t); }, []); // eslint-disable-line
 
-    if (!isPlaying || duration === 0) return undefined;
-
-    const tick = 50;
-    timerRef.current = setInterval(() => {
-      elapsedRef.current += tick;
-      const nextProgress = Math.min((elapsedRef.current / duration) * 100, 100);
-      setProgress(nextProgress);
-
-      if (elapsedRef.current >= duration) {
-        clearInterval(timerRef.current);
-        if (slideIndex < SLIDES.length - 1) {
-          goTo(slideIndex + 1);
-        }
-      }
-    }, tick);
-
-    return () => clearInterval(timerRef.current);
-  }, [currentSlide.duration, goTo, isPlaying, slideIndex]);
+  const S = SCENES[i], View = VIEWS[S.id];
 
   return (
-    <div className="min-h-screen bg-[#030711] text-white">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-cream via-white to-white">
       <Navbar />
-
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 28%), radial-gradient(circle at top right, rgba(34,197,94,0.1), transparent 28%), radial-gradient(circle at bottom center, rgba(139,92,246,0.12), transparent 30%), #030711",
-        }}
-      />
-
-      <div className="fixed left-0 right-0 top-16 z-40 h-[3px] bg-white/5">
-        <motion.div
-          className="h-full"
-          style={{
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${currentSlide.color}, ${currentSlide.color}aa)`,
-          }}
-        />
-      </div>
-
-      <div className="relative mx-auto flex w-full max-w-[1600px] gap-6 px-4 pb-28 pt-28 sm:px-6 xl:px-10">
-        <aside className="sticky top-28 hidden h-[calc(100vh-10rem)] w-[260px] shrink-0 xl:block">
-          <div className="rounded-[28px] border border-white/10 bg-[#18153a]/80 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-            <div className="mb-5 px-2">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                Demo navigator
-              </p>
-              <h2 className="mt-2 text-xl font-black text-white" style={{ fontFamily: "var(--font-display)" }}>
-                Product walkthrough
-              </h2>
-            </div>
-
-            <div className="space-y-2">
-              {SLIDES.map((item, index) => {
-                const Icon = item.icon;
-                const active = index === slideIndex;
-
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => goTo(index)}
-                    className="w-full rounded-2xl border px-4 py-3 text-left transition-all"
-                    style={{
-                      borderColor: active ? `${item.color}55` : "#2b2850",
-                      background: active ? `${item.color}12` : "rgba(255,255,255,0.02)",
-                    }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: active ? `${item.color}44` : "#1c2a38" }}>
-                        <Icon className="h-4 w-4" style={{ color: active ? item.color : "#a9a7c9" }} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em]" style={{ color: active ? item.color : "#a9a7c9", fontFamily: "var(--font-mono)" }}>
-                          {String(index + 1).padStart(2, "0")}
-                        </p>
-                        <p className="mt-1 text-sm font-bold text-white">{item.label}</p>
-                        <p className="mt-1 text-xs leading-5 text-[#b3b1d3]" style={{ fontFamily: "var(--font-mono)" }}>
-                          {item.eyebrow}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </aside>
-
-        <main className="relative z-10 min-w-0 flex-1">
-          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-                InsightFlow / Product Demo
-              </div>
-              <div className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em]" style={{ color: currentSlide.color, fontFamily: "var(--font-mono)" }}>
-                {currentSlide.label}
-              </div>
-            </div>
-
-            <div className="hidden rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#e4e2f8] lg:flex lg:items-center lg:gap-2" style={{ fontFamily: "var(--font-mono)" }}>
-              <Eye className="h-4 w-4 text-[#a1f4e6]" />
-              Auto-play walkthrough
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide.id}
-              initial={{ opacity: 0, y: 26, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -18, scale: 0.99 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <CurrentScene slide={currentSlide} />
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </div>
-
-      <div className="fixed bottom-5 left-0 right-0 z-50 px-4">
-        <div className="mx-auto flex w-full max-w-[980px] flex-wrap items-center justify-center gap-3 rounded-[26px] border border-white/10 bg-[#18153a]/88 px-4 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:px-5">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handlePrev}
-            disabled={slideIndex === 0}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#a9a7c9] transition-all disabled:opacity-35"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setIsPlaying((value) => !value);
-              elapsedRef.current = (progress / 100) * currentSlide.duration;
-            }}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-[#031018]"
-            style={{ background: currentSlide.color, boxShadow: `0 0 18px ${currentSlide.color}55` }}
-          >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          </motion.button>
-
-          <div className="flex items-center gap-2">
-            {SLIDES.map((item, index) => (
-              <button
-                key={item.id}
-                onClick={() => goTo(index)}
-                className="rounded-full transition-all"
-                style={{
-                  width: index === slideIndex ? 26 : 8,
-                  height: 8,
-                  background: index === slideIndex ? item.color : index < slideIndex ? "#6a8fb4" : "#1f3448",
-                }}
-              />
-            ))}
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleNext}
-            disabled={slideIndex === SLIDES.length - 1}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 text-[#a9a7c9] transition-all disabled:opacity-35"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </motion.button>
-
-          {slideIndex < SLIDES.length - 1 && (
-            <button
-              onClick={() => goTo(SLIDES.length - 1)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#e4e2f8]"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              Skip to final
-              <SkipForward className="h-4 w-4" />
-            </button>
-          )}
-
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#a9a7c9]" style={{ fontFamily: "var(--font-mono)" }}>
-            {slideIndex + 1}/{SLIDES.length}
-          </div>
+      <header className="container-x relative pb-10 pt-10 text-center">
+        <span className="if-blob absolute left-1/2 top-0 h-64 w-[34rem] -translate-x-1/2 rounded-full bg-coral/25" />
+        <div className="relative mx-auto max-w-3xl">
+          <motion.span initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-white bg-white/70 px-3.5 py-1.5 text-[12px] font-semibold text-ink-2 shadow-sm backdrop-blur"><Sparkles className="h-3.5 w-3.5 text-coral" />Interactive product tour</motion.span>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-6 text-[40px] font-extrabold leading-[1.04] text-ink sm:text-[60px]">See InsightFlow <span className="text-coral-grad">in action</span></motion.h1>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted">Watch the product tour play on its own, or click any section. Everything below is sample data.</motion.p>
         </div>
-      </div>
+      </header>
+
+      <main className="container-x pb-20">
+        <motion.div initial={{ opacity: 0, y: 50, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="relative"
+          onMouseEnter={() => setPlaying(false)} onMouseLeave={() => setPlaying(true)}>
+          <span className="absolute -inset-3 rounded-[40px] bg-gradient-to-r from-coral/40 via-[#f5a25d]/30 to-[#8f86ff]/40 blur-2xl" />
+          <div ref={winRef} className="relative overflow-hidden rounded-[28px] border border-white bg-white shadow-[0_50px_120px_-40px_rgba(22,19,46,.55)]">
+            {/* browser bar */}
+            <div className="flex items-center gap-3 border-b border-line bg-slate-50 px-4 py-3">
+              <span className="flex gap-1.5"><i className="h-3 w-3 rounded-full bg-[#ff5f57]" /><i className="h-3 w-3 rounded-full bg-[#febc2e]" /><i className="h-3 w-3 rounded-full bg-[#28c840]" /></span>
+              <span className="mx-auto flex w-full max-w-md items-center justify-center gap-2 rounded-full bg-white px-4 py-1.5 font-mono text-[12px] text-slate-500 ring-1 ring-line"><Lock className="h-3 w-3 text-[#2bb89a]" /><AnimatePresence mode="wait"><motion.span key={S.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{PATHS[S.id]}</motion.span></AnimatePresence></span>
+              <button onClick={() => setPlaying((p) => !p)} aria-label="Play or pause" className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white">{playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}</button>
+            </div>
+
+            <div className="grid md:grid-cols-[220px_1fr]">
+              {/* sidebar */}
+              <aside className="bg-ink p-4 md:min-h-[600px]">
+                <div className="hidden items-center gap-2.5 px-2 pb-5 pt-1 md:flex"><img src="/logo-mark.png" alt="" className="h-7 w-auto" /><span className="text-[17px] font-extrabold text-white">Insight<span className="bg-gradient-to-r from-[#4aa8ff] to-[#b07bff] bg-clip-text text-transparent">Flow</span></span></div>
+                <div className="hidden rounded-xl bg-white/[0.06] p-3 md:block"><p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Workspace</p><p className="mt-0.5 text-[13px] font-bold text-white">Acme Learning</p><p className="text-[11px] text-white/50">Organizer</p></div>
+                <nav className="mt-4 flex gap-1.5 overflow-x-auto md:flex-col md:overflow-visible">
+                  {SCENES.map((s, k) => (
+                    <button key={s.id} ref={(el) => (itemRefs.current[k] = el)} onClick={() => go(k)} className={`relative flex shrink-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-left transition-colors ${k === i ? "bg-white/10 text-white" : "text-white/55 hover:bg-white/5 hover:text-white"}`}>
+                      {k === i && <motion.span layoutId="demo-active" className="absolute inset-y-2 left-0 w-1 rounded-full bg-coral" />}
+                      <s.icon className={`h-4 w-4 ${k === i ? "text-coral" : ""}`} /><span className="whitespace-nowrap text-[13.5px] font-semibold">{s.label}</span>
+                      {k === i && <span className="absolute bottom-0 left-0 h-[2px] bg-coral" style={{ width: `${prog}%` }} />}
+                    </button>
+                  ))}
+                </nav>
+                <div className="mt-5 hidden items-center gap-2 md:flex">
+                  <button onClick={() => go(i - 1)} aria-label="Previous" className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"><SkipBack className="h-4 w-4" /></button>
+                  <button onClick={() => go(i + 1)} aria-label="Next" className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"><SkipForward className="h-4 w-4" /></button>
+                  <span className="ml-auto text-[11px] font-semibold text-white/40">{i + 1} / {SCENES.length}</span>
+                </div>
+              </aside>
+
+              {/* content */}
+              <section className="min-w-0 bg-slate-50 p-4 sm:p-7">
+                <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[12px] font-bold uppercase tracking-widest text-coral-dark">{S.label}</p>
+                    <h2 className="mt-1 text-[24px] font-extrabold leading-tight text-ink sm:text-[30px]">{S.title}</h2>
+                    <p className="mt-1 text-[14.5px] text-muted">{S.sub}</p>
+                  </div>
+                  <span className="flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-ink-2 ring-1 ring-line"><span className="h-2 w-2 animate-pulse rounded-full bg-[#2bb89a]" />Live</span>
+                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div key={S.id} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }}>
+                    <View tick={prog} />
+                  </motion.div>
+                </AnimatePresence>
+              </section>
+            </div>
+            <Cursor x={cur.x} y={cur.y} k={cur.k} />
+          </div>
+        </motion.div>
+
+        <section className="relative mt-16 overflow-hidden rounded-[32px] bg-ink px-8 py-14 text-center sm:px-16">
+          <span className="if-blob absolute -right-10 -top-20 h-72 w-72 rounded-full bg-coral/40" />
+          <span className="if-blob absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-[#5a4fc4]/50" style={{ animationDelay: "-4s" }} />
+          <h2 className="relative text-[30px] font-extrabold text-white sm:text-[44px]">Ready to track your own product?</h2>
+          <p className="relative mx-auto mt-3 max-w-md text-white/70">Register your organization, create a workspace, add a project and get your tracking script in minutes.</p>
+          <div className="relative mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/signup" className="btn btn-primary">Start free <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/help" className="btn !border !border-white/20 !bg-white/10 text-white hover:!bg-white/20">Read the help guide</Link>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
